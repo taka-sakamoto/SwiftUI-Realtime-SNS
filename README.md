@@ -1,6 +1,7 @@
 # SwiftUI Realtime SNS
 
-Realtime photo sharing SNS built with SwiftUI and Firebase.
+Realtime photo sharing SNS built with SwiftUI and Firebase.  
+Instagram-inspired realtime photo sharing app built with SwiftUI and Firebase.
 
 ## Features
 
