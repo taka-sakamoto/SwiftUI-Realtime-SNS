@@ -22,8 +22,8 @@ Realtime photo sharing SNS built with SwiftUI and Firebase.
 ## Screenshots
 
 <p float="left">
-  <img src="https://raw.githubusercontent.com/taka-sakamoto/SwiftUI-Realtimes-SNS/main/screenshot1.png" width="250"/>
-  <img src="https://raw.githubusercontent.com/taka-sakamoto/SwiftUI-Realtimes-SNS/main/screenshot2.png" width="250"/>
-  <img src="https://raw.githubusercontent.com/taka-sakamoto/SwiftUI-Realtimes-SNS/main/screenshot3.png" width="250"/>
-  <img src="https://raw.githubusercontent.com/taka-sakamoto/SwiftUI-Realtimes-SNS/main/screenshot4.png" width="250"/>
+  <img src="https://raw.githubusercontent.com/taka-sakamoto/SwiftUI-Realtime-SNS/main/screenshot1.png" width="250"/>
+  <img src="https://raw.githubusercontent.com/taka-sakamoto/SwiftUI-Realtime-SNS/main/screenshot2.png" width="250"/>
+  <img src="https://raw.githubusercontent.com/taka-sakamoto/SwiftUI-Realtime-SNS/main/screenshot3.png" width="250"/>
+  <img src="https://raw.githubusercontent.com/taka-sakamoto/SwiftUI-Realtime-SNS/main/screenshot4.png" width="250"/>
 </p>
