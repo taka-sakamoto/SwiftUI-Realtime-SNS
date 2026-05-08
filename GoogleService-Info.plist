@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyCFzmS8RauOOqYsFu4tUEXjUySIhZ64hTc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>931394091065</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.taka.MetalFirebaseApp</string>
+	<key>PROJECT_ID</key>
+	<string>metalfirebaseapp</string>
+	<key>STORAGE_BUCKET</key>
+	<string>metalfirebaseapp.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:931394091065:ios:14337c66f5aa348939b5e8</string>
+</dict>
+</plist>

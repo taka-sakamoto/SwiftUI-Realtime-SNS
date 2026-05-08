@@ -1,0 +1,154 @@
+//
+//  PostRow.swift
+//  MetalFirebaseApp
+//
+//  Created by Takayuki Sakamoto on 2026/05/03.
+//
+
+import SwiftUI
+import FirebaseAuth
+
+struct PostRow: View {
+    let post: Post
+    let onDelete: () -> Void
+    let onTap: () -> Void
+    let onLike: () -> Void
+    
+    @State private var showAlert = false
+    
+    @State private var animateLike = false
+    @State private var showBigHeart = false
+    
+    var body: some View {
+        
+        let isLiked = post.likedBy.contains(Auth.auth().currentUser?.uid ?? "")
+
+        VStack {
+            HStack(spacing: 8) {
+                Circle()
+                    .fill(Color.gray.opacity(0.2))
+                    .frame(width: 30, height: 30)
+                    .overlay(
+                        Text(String(post.userName.prefix(1)))
+                            .font(.caption)
+                            .fontWeight(.bold)
+                    )
+                
+                Text(post.userName)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                
+                Spacer()
+                
+            }
+            .padding(.horizontal, 4)
+            
+            ZStack {
+                AsyncImage(url: URL(string: post.imageUrl)) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFit() // 元比率維持
+                        
+                    case .empty:
+                        ProgressView()
+                        
+                    case .failure:
+                        Color.gray
+                        
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+                
+                // 中央ハート❤️
+                if showBigHeart {
+                    Image(systemName: "heart.fill")
+                        .font(.system(size:80))
+                        .foregroundColor(.white.opacity(0.9))
+                        .shadow(radius: 10)
+                }
+            }
+            
+            HStack {
+                Button {
+                    onLike()
+                    
+                    let generator = UIImpactFeedbackGenerator(style: .light)
+                    generator.impactOccurred()
+                    
+                    animateLike = true
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        animateLike = false
+                    }
+                    
+                } label: {
+                    // いいね処理
+                    Image(systemName: isLiked ? "heart.fill" : "heart")
+                        .foregroundColor(isLiked ? .red : .gray)
+                        .scaleEffect(animateLike ? 1.5 : 1.0)
+                        .animation(
+                            .spring(response: 0.25, dampingFraction: 0.5),
+                            value: animateLike
+                        )
+                        
+                }
+
+                Text("\(post.likedBy.count)")
+                    .font(.caption)
+                
+                Spacer()
+                
+                if post.userId == Auth.auth().currentUser?.uid {
+                    Button("削除", role: .destructive) {
+                        showAlert = true
+                    }
+                    .foregroundColor(.red)
+                }
+            }
+            .padding(.horizontal, 4)
+            
+            
+           
+        }
+        .alert("削除しますか？", isPresented: $showAlert) {
+            Button("削除", role:  .destructive) {
+                onDelete()
+            }
+            Button("キャンセル", role: .cancel) {}
+        }
+        
+        .onTapGesture(count: 2) {
+            
+            onLike()
+            
+            let generator = UIImpactFeedbackGenerator(style: .light)
+            generator.impactOccurred()
+            
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                showBigHeart = true
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                withAnimation {
+                    showBigHeart = false
+                }
+            }
+        }
+        
+        .onTapGesture {
+            onTap()
+        }
+        
+    }
+    
+}
+
+
+/*
+#Preview {
+    PostRow()
+}
+*/
