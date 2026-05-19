@@ -43,7 +43,8 @@ class ImageListViewModel: ObservableObject {
                         userName: data["userName"] as? String ?? "Unknown",
                         imagePath: data["imagePath"] as? String ?? "",
                         createdAt: timestamp.dateValue(),
-                        likedBy: data["likedBy"] as? [String] ?? []
+                        likedBy: data["likedBy"] as? [String] ?? [],
+                        commentCount: data["commentCount"] as? Int ?? 0
                     )
                 }
                 .sorted { $0.createdAt > $1.createdAt }
@@ -64,8 +65,8 @@ class ImageListViewModel: ObservableObject {
         }
     }
     
-    func uploadImage(data: Data, uid: String) {
-        FirebaseService.shared.uploadImage(data: data, uid: uid)
+    func uploadImage(data: Data, uid: String, name: String) {
+        FirebaseService.shared.uploadImage(data: data, uid: uid, name: name)
         print("Firestore保存")
     }
     
@@ -76,5 +77,7 @@ class ImageListViewModel: ObservableObject {
     func toggleLike(post: Post) {
         FirebaseService.shared.toggleLike(post: post)
     }
+    
+    
 }
 

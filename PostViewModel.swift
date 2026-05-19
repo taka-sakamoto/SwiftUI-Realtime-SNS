@@ -43,7 +43,8 @@ class PostViewModel: ObservableObject {
                         userName: data["userName"] as? String ?? "Unknown",
                         imagePath: data["imagePath"] as? String ?? "",
                         createdAt: date,
-                        likedBy: data["likedBy"] as? [String] ?? []
+                        likedBy: data["likedBy"] as? [String] ?? [],
+                        commentCount: data["commentCount"] as? Int ?? 0
                     )
                 }
                 .sorted { $0.createdAt > $1.createdAt }

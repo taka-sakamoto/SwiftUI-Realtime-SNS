@@ -13,35 +13,47 @@ struct PostRow: View {
     let onDelete: () -> Void
     let onTap: () -> Void
     let onLike: () -> Void
+    let onComment: () -> Void
     
     @State private var showAlert = false
     
     @State private var animateLike = false
     @State private var showBigHeart = false
     
+    func relativeDate(_ date: Date) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .short
+        return formatter.localizedString(for: date, relativeTo: Date())
+    }
+    
     var body: some View {
         
         let isLiked = post.likedBy.contains(Auth.auth().currentUser?.uid ?? "")
 
-        VStack {
+        VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Circle()
-                    .fill(Color.gray.opacity(0.2))
-                    .frame(width: 30, height: 30)
+                    // .fill(Color.gray.opacity(0.2))
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 36, height: 36)
                     .overlay(
                         Text(String(post.userName.prefix(1)))
-                            .font(.caption)
-                            .fontWeight(.bold)
+                            .font(.headline)
                     )
                 
-                Text(post.userName)
-                    .font(.caption)
-                    .fontWeight(.semibold)
+                VStack(alignment: .leading, spacing: 2) {
+                    
+                    Text(post.userName)
+                        .font(.headline)
+                    
+                    Text(relativeDate(post.createdAt))
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
                 
                 Spacer()
                 
             }
-            .padding(.horizontal, 4)
             
             ZStack {
                 AsyncImage(url: URL(string: post.imageUrl)) { phase in
@@ -99,6 +111,18 @@ struct PostRow: View {
                 Text("\(post.likedBy.count)")
                     .font(.caption)
                 
+                HStack(spacing: 4) {
+                    
+                    Button {
+                        onComment()
+                    } label: {
+                        Image(systemName: "message")
+                    }
+                    
+                    Text("\(post.commentCount)")
+                        .font(.caption)
+                }
+                
                 Spacer()
                 
                 if post.userId == Auth.auth().currentUser?.uid {
@@ -108,11 +132,10 @@ struct PostRow: View {
                     .foregroundColor(.red)
                 }
             }
-            .padding(.horizontal, 4)
             
-            
-           
         }
+        .padding(.horizontal)
+        
         .alert("削除しますか？", isPresented: $showAlert) {
             Button("削除", role:  .destructive) {
                 onDelete()
@@ -141,9 +164,9 @@ struct PostRow: View {
         .onTapGesture {
             onTap()
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         
     }
-    
 }
 
 

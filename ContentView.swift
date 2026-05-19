@@ -22,6 +22,11 @@ struct ContentView: View {
     @State private var showPicker = false
     @State private var pickedImage: UIImage?   // 投稿用
     
+    @State private var selectedPost: Post?
+    
+    @AppStorage("userName")
+    var userName = ""
+    
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -71,7 +76,7 @@ struct ContentView: View {
                 
                 // 画像一覧
                 ScrollView {
-                    LazyVGrid(columns: columns, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 16) {
                         ForEach(viewModel.posts) { post in
                             PostRow(
                                 post: post,
@@ -83,21 +88,33 @@ struct ContentView: View {
                                 },
                                 onLike: {
                                     viewModel.toggleLike(post: post)
+                                },
+                                onComment: {
+                                    selectedPost = post
                                 }
                             )
                         }
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
                 }
             }
             .navigationTitle("Images")
         }
         .onAppear {
+            
+            if userName.isEmpty {
+                userName = "User\(Int.random(in: 1000...9999))"
+            }
             signInAnonymously()
             viewModel.startListening()
         }
         .fullScreenCover(item: $selectedImageItem) { item in
             FullScreenImageView(imageUrl: item.url)
+        }
+        
+        .sheet(item: $selectedPost) { post in
+            CommentView(post: post)
         }
         
         .sheet(isPresented: $showPicker) {
@@ -109,10 +126,12 @@ struct ContentView: View {
             guard let uid = Auth.auth().currentUser?.uid else { return }
             
             if let data = image.jpegData(compressionQuality: 0.8) {
-                viewModel.uploadImage(data: data, uid: uid)
+                viewModel.uploadImage(data: data, uid: uid, name: userName)
+                print("投稿userName:", userName)
             }
             
         }
+        
         
     }
     

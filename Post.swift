@@ -15,4 +15,5 @@ struct Post: Identifiable {
     let imagePath: String
     let createdAt: Date
     let likedBy: [String]
+    var commentCount: Int
 }

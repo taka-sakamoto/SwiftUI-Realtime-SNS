@@ -15,8 +15,9 @@ import FirebaseAuth
 class FirebaseService {
     
     static let shared = FirebaseService()
-    private let starage = Storage.storage()
-    private let db = Firestore.firestore()
+
+        private let db = Firestore.firestore()
+        private let storage = Storage.storage()
     
     func createPost(imageUrl: String, userId: String) {
         let data: [String: Any] = [
@@ -35,38 +36,31 @@ class FirebaseService {
         
     }
     
-    func uploadImage(data: Data, uid: String) {
+    func uploadImage(data: Data, uid: String, name: String) {
         
         let path = "images/\(uid)/\(UUID().uuidString).jpg"
-        let ref = Storage.storage().reference().child(path)
+        let ref = storage.reference().child(path)
         
-        let metadata = StorageMetadata()
-        metadata.contentType = "image/jpeg"
-    
         ref.putData(data) { _, error in
-            guard error == nil else { return }
+        
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
             
             ref.downloadURL { url, error in
                 guard let url = url else { return }
                 
-                let userRef = Firestore.firestore().collection("users").document(uid)
-                
-                userRef.getDocument { snapshot, _ in
-                    let name = snapshot?.data()?["name"] as? String ?? "Unknown"
-                    
-                    let postData: [String: Any] = [
-                        "imageUrl": url.absoluteString,
-                        "userId": uid,
-                        "userName": name,
-                        "imagePath": path,
-                        "createdAt": FieldValue.serverTimestamp(),
-                        "likedBy": []
-                    ]
-                    
-                    Firestore.firestore().collection("posts").addDocument(data: postData)
-                    
-                    print("保存成功（userName付き）:", name)
-                }
+                let postData: [String: Any] = [
+                    "imageUrl": url.absoluteString,
+                    "userId": uid,
+                    "userName": name,
+                    "imagePath": path,
+                    "createdAt": FieldValue.serverTimestamp(),
+                    "likedBy": [],
+                    "commentCount": 0
+                ]
+                self.db.collection("posts").addDocument(data: postData)
             }
         }
     }
@@ -94,7 +88,8 @@ class FirebaseService {
                         userName: data["userName"] as? String ?? "Unknown",
                         imagePath: data["imagePath"] as? String ?? "",
                         createdAt: Date(),
-                        likedBy: data["likedBy"] as? [String] ?? []
+                        likedBy: data["likedBy"] as? [String] ?? [],
+                        commentCount: data["commentCount"] as? Int ?? 0
                     )
                     
                 }
@@ -123,21 +118,103 @@ class FirebaseService {
         ref.delete { _ in }
         print("削除対象:", post.imagePath)
     }
-
+    
     func toggleLike(post: Post) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
-        let ref = Firestore.firestore()
-            .collection("posts")
-            .document(post.id)
+        let ref = db.collection("posts").document(post.id)
         
-        let isLiked = post.likedBy.contains(uid)
-        
-        ref.updateData([
-            "likedBy": isLiked
-            ? FieldValue.arrayRemove([uid])
-            : FieldValue.arrayUnion([uid])
-        ])
+        if post.likedBy.contains(uid) {
+            ref.updateData([
+                "likedBy": FieldValue.arrayRemove([uid])
+            ])
+        } else {
+            ref.updateData([
+                "likedBy": FieldValue.arrayUnion([uid])
+            ])
+        }
     }
+    
+    func addComment(
+        postId: String,
+        text: String,
+        uid: String,
+        userName: String
+    ) {
 
+        let data: [String: Any] = [
+            "text": text,
+            "userId": uid,
+            "userName": userName,
+            "createdAt": FieldValue.serverTimestamp()
+        ]
+
+        db.collection("posts")
+            .document(postId)
+            .collection("comments")
+            .addDocument(data: data)
+        
+        db.collection("posts")
+            .document(postId)
+            .updateData([
+                "commentCount": FieldValue.increment(Int64(1))
+            ])
+    }
+    
+    func listenComments(
+        postId: String,
+        completion: @escaping ([Comment]) -> Void
+    ) {
+
+        db.collection("posts")
+            .document(postId)
+            .collection("comments")
+            .order(by: "createdAt")
+
+            .addSnapshotListener { snapshot, error in
+
+                guard let documents = snapshot?.documents else {
+                    return
+                }
+
+                let comments = documents.compactMap { doc -> Comment? in
+
+                    let data = doc.data()
+
+                    let date =
+                    (data["createdAt"] as? Timestamp)?
+                        .dateValue()
+                    ?? Date()
+
+                    return Comment(
+                        id: doc.documentID,
+                        text: data["text"] as? String ?? "",
+                        userId: data["userId"] as? String ?? "",
+                        userName: data["userName"] as? String ?? "",
+                        createdAt: date
+                    )
+                }
+
+                completion(comments)
+            }
+    }
+    
+    func deleteComment(
+        postId: String,
+        commentId: String
+    ) {
+        
+        db.collection("posts")
+            .document(postId)
+            .collection("comments")
+            .document(commentId)
+            .delete()
+        
+        db.collection("posts")
+            .document(postId)
+            .updateData([
+                "commentCount": FieldValue.increment(Int64(-1))
+            ])
+    }
+    
 }
