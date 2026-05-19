@@ -52,10 +52,9 @@ posts
 ## Screenshots
 
 <p float="left">
-  <img src="https://raw.githubusercontent.com/taka-sakamoto/SwiftUI-Realtime-SNS/main/screenshot1.png" width="250"/>
-  <img src="https://raw.githubusercontent.com/taka-sakamoto/SwiftUI-Realtime-SNS/main/screenshot2.png" width="250"/>
-  <img src="https://raw.githubusercontent.com/taka-sakamoto/SwiftUI-Realtime-SNS/main/screenshot3.png" width="250"/>
-  <img src="https://raw.githubusercontent.com/taka-sakamoto/SwiftUI-Realtime-SNS/main/screenshot4.png" width="250"/>
+  <img src="screenshots/feed.png" width="250" />
+  <img src="screenshots/comments.png" width="250" />
+  <img src="screenshots/fullscreen.png" width="250" />
 </p>
 
 ## Future Improvements
