@@ -1,11 +1,11 @@
 # SwiftUI Realtime SNS
 
-A realtime SNS-style iOS application built with SwiftUI and Firebase.   
+A real-time SNS app built with SwiftUI, Firebase, and Metal.  
 
 ## Features
 
-- Anonymous Authentication
-- Realtime Firestore Updates
+- Firebase Authentication
+- Firestore real-time feed updates
 - Firebase Storage Image Upload
 - Realtime Feed
 - Like System
@@ -17,8 +17,12 @@ A realtime SNS-style iOS application built with SwiftUI and Firebase.
 - Realtime Comments
 - Comment Count Synchronization
 - Comment Delete Function
+- Hero Animations
 - User Name Persistence
 - SNS-style Feed UI  
+- Metal-based image filters  
+- Filter preview selector  
+- SwiftUI modern UI  
 
 ## Tech Stack
 
@@ -27,7 +31,9 @@ A realtime SNS-style iOS application built with SwiftUI and Firebase.
 - Cloud Firestore
 - Firebase Storage
 - AVFoundation
-- AsyncImage
+- AsyncImage  
+- Metal  
+- MTKTextureLoader  
 
 ## Firestore Structure
 
@@ -53,17 +59,28 @@ posts
 
 <p float="left">
   <img src="screenshots/feed.png" width="250" />
+  <img src="screenshots/metalfilter.png" width="250" />
   <img src="screenshots/comments.png" width="250" />
+</p>
+<p align="left">
+  <img src="screenshots/userpage.png" width="250" />
   <img src="screenshots/fullscreen.png" width="250" />
 </p>
 
+## Metal Filters
+
+This app uses custom Metal shaders instead of CoreImage filters.
+
+Implemented filters:
+- Invert
+- Mono
+- Sepia
+  
 ## Future Improvements
 
 - User Profile Screen
 - Follow System
 - Push Notifications
-- Hero Animations
-- Metal GPU Filters
 - Realtime Image Effects
 - Reply Threads
 - Image Caching
