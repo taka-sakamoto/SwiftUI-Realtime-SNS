@@ -11,16 +11,18 @@ import SwiftUI
 
 struct FullScreenImageView: View {
     let imageUrl: String
-    @Environment(\.dismiss) var dismiss
+    let postId: String
+    let namespace: Namespace.ID
+    let onClose: () -> Void
     
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
     @State private var offsetY: CGFloat = 0
     
     var body: some View {
+        
         ZStack {
             Color.black
-                .opacity(max(0.2, 1 - abs(offsetY) / 300.0))
                 .ignoresSafeArea()
             
             AsyncImage(url: URL(string: imageUrl)) { phase in
@@ -29,17 +31,15 @@ struct FullScreenImageView: View {
                     image
                         .resizable()
                         .scaledToFit()
-                        .scaleEffect(scale)
-                        .gesture(
-                            MagnificationGesture()
-                                .onChanged { value in
-                                    scale = lastScale * value
-                                }
-                                .onEnded { _ in
-                                    lastScale = scale
-                                }
+                        
+                        .frame(
+                            maxWidth: 350,
+                            maxHeight: 600
                         )
-
+                    
+                        
+                    
+                    
                 case .empty:
                     ProgressView()
                     
@@ -50,16 +50,20 @@ struct FullScreenImageView: View {
                     EmptyView()
                 }
             }
+            
+            .matchedGeometryEffect(
+                id: postId,
+                in: namespace,
+                isSource: false
+            )
+        
+            .zIndex(1)
         }
-        .onTapGesture(count: 2) {
-            if scale > 1 {
-                scale = 1
-                lastScale = 1
-            } else {
-                scale = 2
-                lastScale = 2
-            }
+        
+        .onTapGesture {
+            onClose()
         }
+        
         .offset(y: offsetY)
         .gesture(
             DragGesture()
@@ -68,9 +72,19 @@ struct FullScreenImageView: View {
                 }
                 .onEnded { value in
                     if value.translation.height > 150 {
-                        dismiss()
+
+                        withAnimation(.spring(
+                            response: 0.4,
+                            dampingFraction: 0.85
+                        )) {
+
+                            onClose()
+                        }
+
                     } else {
+
                         withAnimation {
+
                             offsetY = 0
                         }
                     }
@@ -78,3 +92,4 @@ struct FullScreenImageView: View {
         )
     }
 }
+

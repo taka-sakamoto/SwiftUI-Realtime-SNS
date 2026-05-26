@@ -11,7 +11,7 @@ import FirebaseAuth
 import FirebaseFirestore
 
 struct SelectedImage: Identifiable {
-    let id = UUID()
+    let id: String
     let url: String
 }
 
@@ -19,10 +19,9 @@ struct ContentView: View {
     @StateObject var viewModel = ImageListViewModel()
     @State private var selectedImageItem: SelectedImage? // 拡大表示用
     
-    @State private var showPicker = false
-    @State private var pickedImage: UIImage?   // 投稿用
-    
     @State private var selectedPost: Post?
+
+    @State private var showUploadView = false
     
     @AppStorage("userName")
     var userName = ""
@@ -31,6 +30,10 @@ struct ContentView: View {
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
+    
+    let namespace: Namespace.ID
+    
+    @State private var selectedFilter: FilterType = .invert
     
     func signInAnonymously() {
         Auth.auth().signInAnonymously { result, error in
@@ -65,73 +68,85 @@ struct ContentView: View {
     }
     
     var body: some View {
-        NavigationView {
-            VStack {
-                
-                // 投稿ボタン
-                Button("投稿") {
-                    showPicker = true
-                }
-                .padding()
-                
-                // 画像一覧
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        ForEach(viewModel.posts) { post in
-                            PostRow(
-                                post: post,
-                                onDelete: {
-                                    viewModel.deletePost(post: post)
-                                },
-                                onTap: {
-                                    selectedImageItem = SelectedImage(url: post.imageUrl)
-                                },
-                                onLike: {
-                                    viewModel.toggleLike(post: post)
-                                },
-                                onComment: {
-                                    selectedPost = post
-                                }
-                            )
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                }
-            }
-            .navigationTitle("Images")
-        }
-        .onAppear {
+        ZStack {
             
-            if userName.isEmpty {
-                userName = "User\(Int.random(in: 1000...9999))"
+            NavigationView {
+                
+                VStack {
+                    
+                    // 投稿ボタン
+                    Button("投稿") {
+                        showUploadView = true
+                    }
+                    .padding()
+                    
+                    // 画像一覧
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
+                            ForEach(viewModel.posts) { post in
+                                PostRow(
+                                    post: post,
+                                    onDelete: {
+                                        viewModel.deletePost(post: post)
+                                    },
+                                    onTap: {
+                                        withAnimation(.spring(response: 0.4,
+                                                              dampingFraction: 0.85)) {
+                                            selectedImageItem =
+                                            SelectedImage(
+                                                id: post.id,
+                                                url: post.imageUrl
+                                            )
+                                        }
+                                    },
+                                    onLike: {
+                                        viewModel.toggleLike(post: post)
+                                    },
+                                    onComment: {
+                                        selectedPost = post
+                                    },
+                                    namespace: namespace,
+                                    isSource: selectedImageItem == nil
+                                )
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                    }
+                    
+                }
+                .navigationTitle("Images")
             }
-            signInAnonymously()
-            viewModel.startListening()
+            .onAppear {
+                
+                if userName.isEmpty {
+                    userName = "User\(Int.random(in: 1000...9999))"
+                }
+                signInAnonymously()
+                viewModel.startListening()
+            }
+            
+            if let item = selectedImageItem {
+                
+                FullScreenImageView(
+                    imageUrl: item.url,
+                    postId: item.id,
+                    namespace: namespace,
+                    onClose: {
+                    selectedImageItem = nil
+                    }
+                )
+                .zIndex(1)
+            }
+            
         }
-        .fullScreenCover(item: $selectedImageItem) { item in
-            FullScreenImageView(imageUrl: item.url)
-        }
-        
         .sheet(item: $selectedPost) { post in
             CommentView(post: post)
         }
         
-        .sheet(isPresented: $showPicker) {
-            ImagePicker(image: $pickedImage)
+        .sheet(isPresented: $showUploadView) {
+            PostUploadView(userName: userName)
         }
-        .onChange(of: pickedImage) {
-            guard let image = pickedImage else { return }
-            
-            guard let uid = Auth.auth().currentUser?.uid else { return }
-            
-            if let data = image.jpegData(compressionQuality: 0.8) {
-                viewModel.uploadImage(data: data, uid: uid, name: userName)
-                print("投稿userName:", userName)
-            }
-            
-        }
-        
         
     }
     

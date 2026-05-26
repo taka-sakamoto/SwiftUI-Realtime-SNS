@@ -14,6 +14,8 @@ struct PostRow: View {
     let onTap: () -> Void
     let onLike: () -> Void
     let onComment: () -> Void
+    let namespace: Namespace.ID
+    let isSource: Bool
     
     @State private var showAlert = false
     
@@ -62,7 +64,7 @@ struct PostRow: View {
                         image
                             .resizable()
                             .scaledToFit() // 元比率維持
-                        
+  
                     case .empty:
                         ProgressView()
                         
@@ -153,6 +155,7 @@ struct PostRow: View {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                 showBigHeart = true
             }
+            
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                 withAnimation {

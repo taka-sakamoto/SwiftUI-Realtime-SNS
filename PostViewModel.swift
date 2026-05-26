@@ -42,6 +42,7 @@ class PostViewModel: ObservableObject {
                         userId: data["userId"] as? String ?? "",
                         userName: data["userName"] as? String ?? "Unknown",
                         imagePath: data["imagePath"] as? String ?? "",
+                        filterName: data["filterName"] as? String,
                         createdAt: date,
                         likedBy: data["likedBy"] as? [String] ?? [],
                         commentCount: data["commentCount"] as? Int ?? 0

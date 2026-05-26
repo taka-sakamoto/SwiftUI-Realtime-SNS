@@ -13,7 +13,11 @@ struct Post: Identifiable {
     let userId: String
     let userName: String
     let imagePath: String
+    
+    let filterName: String?
+    
     let createdAt: Date
     let likedBy: [String]
+    
     var commentCount: Int
 }

@@ -87,6 +87,7 @@ class FirebaseService {
                         userId: data["userId"] as? String ?? "",
                         userName: data["userName"] as? String ?? "Unknown",
                         imagePath: data["imagePath"] as? String ?? "",
+                        filterName: data["filterName"] as? String,
                         createdAt: Date(),
                         likedBy: data["likedBy"] as? [String] ?? [],
                         commentCount: data["commentCount"] as? Int ?? 0
@@ -106,17 +107,13 @@ class FirebaseService {
             .collection("posts")
             .document(post.id)
             .delete { error in
-                if let error = error {
-                    print("Firestore削除エラー:", error)
-                } else {
-                    print("Firesotore削除成功")
-                }
+               
             }
         
         // Storage削除(pathベース)
         let ref = Storage.storage().reference(withPath: post.imagePath)
         ref.delete { _ in }
-        print("削除対象:", post.imagePath)
+        
     }
     
     func toggleLike(post: Post) {

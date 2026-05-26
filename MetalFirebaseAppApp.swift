@@ -10,6 +10,8 @@ import FirebaseCore
 
 @main
 struct MetalFirebaseAppApp: App {
+    
+    @Namespace private var animation
 
     init() {
         FirebaseApp.configure()
@@ -17,7 +19,22 @@ struct MetalFirebaseAppApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            
+            TabView {
+                
+                ContentView(
+                    namespace: animation
+                )
+                    .tabItem {
+                        Label("Feed",
+                              systemImage: "house")
+                    }
+                ProfileView(namespace: animation)
+                    .tabItem {
+                        Label("Profile",
+                              systemImage: "person")
+                    }
+            }
         }
     }
 }

@@ -42,6 +42,7 @@ class ImageListViewModel: ObservableObject {
                         userId: data["userId"] as? String ?? "",
                         userName: data["userName"] as? String ?? "Unknown",
                         imagePath: data["imagePath"] as? String ?? "",
+                        filterName: data["filterName"] as? String,
                         createdAt: timestamp.dateValue(),
                         likedBy: data["likedBy"] as? [String] ?? [],
                         commentCount: data["commentCount"] as? Int ?? 0
@@ -67,7 +68,6 @@ class ImageListViewModel: ObservableObject {
     
     func uploadImage(data: Data, uid: String, name: String) {
         FirebaseService.shared.uploadImage(data: data, uid: uid, name: name)
-        print("Firestore保存")
     }
     
     func deletePost(post: Post) {
