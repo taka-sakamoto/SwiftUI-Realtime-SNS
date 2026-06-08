@@ -22,6 +22,8 @@ final class MetalFilterManager {
     
     var fragmentFunctionName: String = "invertFragmentShader"
     
+    
+    
     private init() {
         
         guard let device = MTLCreateSystemDefaultDevice(),
@@ -44,7 +46,8 @@ final class MetalFilterManager {
         filter: FilterType
     ) -> UIImage {
         
-        let normalized = normalizedImage(image)
+        //let normalized = normalizedImage(image)
+        let normalized = image
         
         switch filter {
             
@@ -131,6 +134,16 @@ final class MetalFilterManager {
             return image
 
         }
+
+        var uniforms = AspectUniforms(
+            aspectScale: 1.0
+        )
+
+        encoder.setVertexBytes(
+            &uniforms,
+            length: MemoryLayout<AspectUniforms>.stride,
+            index: 0
+        )
         
         encoder.setRenderPipelineState(pipelineState)
         
@@ -179,9 +192,16 @@ final class MetalFilterManager {
             return image
         }
         
-        return UIImage(cgImage: outputCGImage)
+        return UIImage(
+            cgImage: outputCGImage,
+            scale: image.scale,
+            orientation: image.imageOrientation
+            //scale: normalized.scale,
+            //orientation: .up
+        )
     }
     
+
     private func buildPipeline() {
         
         guard let library = device.makeDefaultLibrary() else {
@@ -219,6 +239,7 @@ final class MetalFilterManager {
         }
     }
     
+    /*
     private func normalizedImage(_ image: UIImage) -> UIImage {
         
         if image.imageOrientation == .up {
@@ -240,5 +261,12 @@ final class MetalFilterManager {
         
         return normalized ?? image
         
+        print(
+            "normalized:",
+            normalized?.size.width ?? 0,
+            normalized?.size.height ?? 0
+        )
+    
     }
+     */
 }

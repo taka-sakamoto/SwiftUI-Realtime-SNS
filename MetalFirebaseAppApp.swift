@@ -25,10 +25,17 @@ struct MetalFirebaseAppApp: App {
                 ContentView(
                     namespace: animation
                 )
-                    .tabItem {
-                        Label("Feed",
-                              systemImage: "house")
+                .tabItem {
+                    Label("Feed",
+                            systemImage: "house")
                     }
+                
+                CameraScreen()
+                    .tabItem {
+                        Label("Camera",
+                        systemImage: "camera")
+                    }
+                
                 ProfileView(namespace: animation)
                     .tabItem {
                         Label("Profile",
