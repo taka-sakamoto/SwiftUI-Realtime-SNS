@@ -21,6 +21,7 @@ A real-time SNS app built with SwiftUI, Firebase, and Metal shaders.
 <p align="left">
   <img src="screenshots/userpage.png" width="250" />
   <img src="screenshots/fullscreen.png" width="250" />
+  <img src="screenshots/filter.png" width="250" />
 </p>
 
 ## Tech Stack
