@@ -39,24 +39,16 @@ final class Renderer: NSObject, MTKViewDelegate {
     private weak var mtkView: MTKView?
     
     var fragmentFunctionName = "monoFragmentShader"
-    
-    private var didPrintSize = false
-    
-    let vertices: [Float] = [
-        -1, -1, 0, 1,
-         1, -1, 1, 1,
-        -1,  1, 0, 0,
-         1,  1, 1, 0,
-    ]
-    
-    // var aspectScale: Float = 1.0
-    
+
     
     init(mtkView: MTKView) {
         guard let device = mtkView.device,
               let commandQueue = device.makeCommandQueue()
         else {
+            
+            #if DEBUG
             print("Faild to setup Metal")
+            #endif
             
             self.device = MTLCreateSystemDefaultDevice()!
             self.commndQueue = self.device.makeCommandQueue()!
@@ -79,22 +71,6 @@ final class Renderer: NSObject, MTKViewDelegate {
         )
         
         buildPipeline()
-    }
-    
-    private func appendVideoFrame(
-        texture: MTLTexture,
-        time: CFTimeInterval
-    ) {
-        guard let pixelBuffer = createPixelBuffer(from: texture) else {
-            print("Failed to create pixelBuffer")
-            return
-        }
-
-        let cmTime = CMTime(
-            seconds: time,
-            preferredTimescale: 600
-        )
-
     }
     
     private func buildPipeline() {
@@ -157,20 +133,12 @@ final class Renderer: NSObject, MTKViewDelegate {
         
         self.currentTexture = texture
         
-        print(
-            "pixelBuffer:",
-            width,
-            height
-        )
     }
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
     }
     
     func draw(in view: MTKView) {
-        
-        // print("mtkView bounds:", view.bounds)
-        // print("drawableSize:", view.drawableSize)
         
         guard let texture = currentTexture,
               let drawable = view.currentDrawable,
@@ -345,12 +313,6 @@ final class Renderer: NSObject, MTKViewDelegate {
         else {
             return nil
         }
-        
-        print(
-            "capture image size:",
-            cgImage.width,
-            cgImage.height
-        )
         
         return UIImage(
             cgImage: cgImage,

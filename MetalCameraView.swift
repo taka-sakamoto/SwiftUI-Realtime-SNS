@@ -34,8 +34,6 @@ struct MetalCameraView: UIViewRepresentable {
         }
 
         let mtkView = MTKView(frame: .zero, device: device)
-        
-        //mtkView.contentMode = .scaleAspectFit
 
         mtkView.device = device
         mtkView.framebufferOnly = false
@@ -44,12 +42,6 @@ struct MetalCameraView: UIViewRepresentable {
         
         mtkView.autoResizeDrawable = true
         mtkView.contentMode = .scaleToFill
-        
-        /*
-        mtkView.drawableSize = CGSize(
-            width: 1080, height: 1920
-        )
-         */
 
         if context.coordinator.renderer == nil {
             context.coordinator.renderer = Renderer(mtkView: mtkView)
@@ -63,7 +55,6 @@ struct MetalCameraView: UIViewRepresentable {
         cameraManager.setupCamera()
         
         print("autoResizeDrawable:", mtkView.autoResizeDrawable)
-        print("drawableSize:", mtkView.drawableSize)
 
         return mtkView
 

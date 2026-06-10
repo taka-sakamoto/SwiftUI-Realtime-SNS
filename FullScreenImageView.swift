@@ -36,10 +36,7 @@ struct FullScreenImageView: View {
                             maxWidth: 350,
                             maxHeight: 600
                         )
-                    
-                        
-                    
-                    
+
                 case .empty:
                     ProgressView()
                     

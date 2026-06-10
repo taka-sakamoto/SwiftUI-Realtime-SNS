@@ -86,7 +86,7 @@ final class MetalFilterManager {
         
         let textureDescriptor =
         MTLTextureDescriptor.texture2DDescriptor(
-            pixelFormat: .bgra8Unorm_srgb,
+            pixelFormat: .bgra8Unorm,
             width: width,
             height: height,
             mipmapped: false
@@ -112,8 +112,6 @@ final class MetalFilterManager {
         else {
             return image
         }
-        
-        print(outputTexture.pixelFormat.rawValue)
         
         let renderPassDescriptor = MTLRenderPassDescriptor()
         
@@ -219,13 +217,13 @@ final class MetalFilterManager {
         else {
             fatalError("fragment nil")
         }
-        
+ 
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         
         pipelineDescriptor.vertexFunction = vartexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
          
-        pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm_srgb
+        pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         
         do {
             
@@ -237,36 +235,7 @@ final class MetalFilterManager {
             
             fatalError(error.localizedDescription)
         }
+        
     }
     
-    /*
-    private func normalizedImage(_ image: UIImage) -> UIImage {
-        
-        if image.imageOrientation == .up {
-            return image
-        }
-        
-        UIGraphicsBeginImageContextWithOptions(
-            image.size,
-            false,
-            image.scale
-        )
-        
-        image.draw(in: CGRect(origin: .zero, size: image.size))
-        
-        let normalized =
-            UIGraphicsGetImageFromCurrentImageContext()
-        
-        UIGraphicsEndImageContext()
-        
-        return normalized ?? image
-        
-        print(
-            "normalized:",
-            normalized?.size.width ?? 0,
-            normalized?.size.height ?? 0
-        )
-    
-    }
-     */
 }

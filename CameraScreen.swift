@@ -63,9 +63,7 @@ struct CameraScreen: View {
                 }
                 
                 Button {
-                    print("button tapped")
 
-                    //print("capture")
                     cameraManager.capturePhoto(
                         filter: selectedFilter
                     )

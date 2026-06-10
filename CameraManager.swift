@@ -22,12 +22,11 @@ final class CameraManager: NSObject, ObservableObject {
     
     override init() {
         super.init()
-        print("CameraManager init")
     }
     
     func setupCamera() {
         
-        if isConfigured {
+        if session.isRunning {
             return
         }
         
@@ -52,9 +51,6 @@ final class CameraManager: NSObject, ObservableObject {
         if session.inputs.isEmpty,
            session.canAddInput(input) {
             session.addInput(input)
-            print("Input added")
-        } else {
-            print("Cannot add input")
         }
         
         // Output settings
@@ -70,17 +66,13 @@ final class CameraManager: NSObject, ObservableObject {
             queue: DispatchQueue(label: "camera.frame.queue")
         )
         
-        print("Delegate set")
-        
         // Output
         if session.outputs.isEmpty,
            session.canAddOutput(videoOutput) {
             session.addOutput(videoOutput)
-            print("Output added")
-        } else {
-            print("Cannot add output")
         }
 
+        // Orientation 重要
         if let connection = videoOutput.connection(with: .video) {
             
             if connection.isVideoRotationAngleSupported(90) {
@@ -88,22 +80,13 @@ final class CameraManager: NSObject, ObservableObject {
             }
         }
         
-        /*
-        // Orientation 重要
-        if let connection = videoOutput.connection(with: .video) {
-            if connection.isVideoRotationAngleSupported(90) {
-                connection.videoRotationAngle = 90
-            }
-        }
-        */
-
         session.commitConfiguration()
-        print("Configuration committed")
         
         if !session.isRunning {
             DispatchQueue.global(qos: .userInitiated).async {
-                self.session.startRunning()
-                print("Session started")
+                if !self.session.isRunning {
+                    self.session.startRunning()
+                }
             }
         }
         
@@ -117,7 +100,7 @@ final class CameraManager: NSObject, ObservableObject {
             print("capture failed")
             return
         }
-
+        
         let filtered =
             MetalFilterManager.shared.applyFilter(
                 to: image,
@@ -143,5 +126,6 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
         }
          
         renderer?.updateTexture(from: pixelBuffer)
+        
     }
 }
