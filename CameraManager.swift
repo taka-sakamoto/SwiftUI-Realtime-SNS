@@ -107,6 +107,13 @@ final class CameraManager: NSObject, ObservableObject {
 
         capturedImage = filtered
         
+        UIImageWriteToSavedPhotosAlbum(
+            filtered,
+            nil,
+            nil,
+            nil
+        )
+        
     }
 }
 

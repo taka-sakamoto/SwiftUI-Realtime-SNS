@@ -191,27 +191,6 @@ final class Renderer: NSObject, MTKViewDelegate {
         
     }
     
-    /*
-    func saveCurrentFrame(from mtkView: MTKView) {
-        let renderer = UIGraphicsImageRenderer(size: mtkView.bounds.size)
-
-        let image = renderer.image { _ in
-            mtkView.drawHierarchy(
-                in: mtkView.bounds,
-                afterScreenUpdates: true
-            )
-        }
-
-        UIImageWriteToSavedPhotosAlbum(
-            image,
-            nil,
-            nil,
-            nil
-        )
-
-    }
-     */
-    
     func createPixelBuffer(from texture: MTLTexture) -> CVPixelBuffer? {
         let width = texture.width
         let height = texture.height
