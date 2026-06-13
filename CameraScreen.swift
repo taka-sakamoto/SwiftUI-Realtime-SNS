@@ -24,7 +24,7 @@ struct CameraScreen: View {
             .ignoresSafeArea()
             
             
-            VStack(spacing: 24) {
+            VStack(spacing: 8) {
                 
                 if let image = cameraManager.capturedImage {
 
@@ -34,33 +34,49 @@ struct CameraScreen: View {
                         .frame(height: 200)
                 }
             
-                ScrollView(.horizontal, showsIndicators: false) {
-                
-                    HStack(spacing: 16) {
+                HStack(spacing: 12) {
                     
-                        ForEach(FilterType.allCases, id: \.self) { filter in
-                      
-                            VStack(spacing: 8) {
-                                
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(
-                                        selectedFilter == filter
-                                        ? Color.blue
-                                        : Color.gray.opacity(0.3)
-                                    )
-                                    .frame(width: 70, height: 70)
+                    ForEach(FilterType.allCases, id: \.self) { filter in
                         
-                                Text(filter.rawValue.capitalized)
-                                    .font(.caption)
-                                    .foregroundStyle(.white)
-                            }
-                            .onTapGesture {
-                                selectedFilter = filter
-                            }
+                        Button {
+                            
+                            selectedFilter = filter
+                            
+                        } label: {
+                            
+                            Text(filter.rawValue.capitalized)
+                                .font(.caption)
+                                .fontWeight(
+                                    selectedFilter == filter
+                                    ? .semibold
+                                    : .regular
+                                )
+                                .foregroundStyle(
+                                    selectedFilter == filter
+                                    ? Color.black
+                                    : Color.white
+                                )
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    selectedFilter == filter
+                                    ? Color.white
+                                    : Color.white.opacity(0.2)
+                                )
+                                .clipShape(Capsule())
+                                .scaleEffect(
+                                    selectedFilter == filter ? 1.05 : 1.0
+                                )
+                                .animation(
+                                    .easeInOut(duration: 0.2),
+                                    value: selectedFilter
+                                )
+                                
                         }
                     }
-                    .padding()
                 }
+                .frame(maxWidth: .infinity)
+                .offset(y: 6)
                 
                 Button {
 

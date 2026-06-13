@@ -16,7 +16,7 @@ final class CameraManager: NSObject, ObservableObject {
     
     let session = AVCaptureSession()
     let videoOutput = AVCaptureVideoDataOutput()
-    private var isConfigured = false
+    
     
     weak var renderer: Renderer?
     
@@ -29,8 +29,6 @@ final class CameraManager: NSObject, ObservableObject {
         if session.isRunning {
             return
         }
-        
-        isConfigured = true
         
         session.beginConfiguration()
         session.sessionPreset = .high

@@ -36,8 +36,6 @@ final class Renderer: NSObject, MTKViewDelegate {
     
     var currentTexture: MTLTexture?
     
-    private weak var mtkView: MTKView?
-    
     var fragmentFunctionName = "monoFragmentShader"
 
     
@@ -193,6 +191,7 @@ final class Renderer: NSObject, MTKViewDelegate {
         
     }
     
+    /*
     func saveCurrentFrame(from mtkView: MTKView) {
         let renderer = UIGraphicsImageRenderer(size: mtkView.bounds.size)
 
@@ -210,8 +209,8 @@ final class Renderer: NSObject, MTKViewDelegate {
             nil
         )
 
-        print("Saved filtered photo")
     }
+     */
     
     func createPixelBuffer(from texture: MTLTexture) -> CVPixelBuffer? {
         let width = texture.width
