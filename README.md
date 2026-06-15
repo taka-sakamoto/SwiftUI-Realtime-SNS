@@ -61,12 +61,12 @@ This app uses custom Metal shaders instead of CoreImage filters.
 
 Image filtering pipeline:
 
-UIImage
-→ CGImage
-→ MTKTextureLoader
-→ MTLTexture
-→ Fragment Shader
-→ UIImage
+UIImage  
+&ensp;→ CGImage   
+&ensp;→ MTKTextureLoader  
+&ensp;→ MTLTexture  
+&ensp;→ Fragment Shader  
+&ensp;→ UIImage  
 
 Implemented filters:
 
