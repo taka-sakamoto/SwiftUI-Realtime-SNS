@@ -28,12 +28,12 @@ A real-time SNS app built with SwiftUI, Firebase, and Metal shaders.
 ## Tech Stack
 
 - SwiftUI
+- Metal  
 - Firebase Authentication
 - Cloud Firestore
 - Firebase Storage
 - AVFoundation
 - AsyncImage  
-- Metal  
 - MTKTextureLoader  
 
 ## Firestore Structure
@@ -92,13 +92,13 @@ Implemented filters:
 
 Camera frames are processed through the following pipeline:
 
-AVCaptureSession
-→ CMSampleBuffer
-→ CVPixelBuffer
-→ CVMetalTexture
-→ MTLTexture
-→ Metal Fragment Shader
-→ MTKView
+AVCaptureSession  
+&ensp;→ CMSampleBuffer  
+&ensp;→ CVPixelBuffer  
+&ensp;→ CVMetalTexture  
+&ensp;→ MTLTexture  
+&ensp;→ Metal Fragment Shader  
+&ensp;→ MTKView  
 
 Real-time filters are rendered directly on the GPU using custom Metal shaders.
 
