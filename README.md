@@ -55,12 +55,21 @@ posts
                 ├── userName
                 └── createdAt
 ```
-
 ## Metal Filters
 
 This app uses custom Metal shaders instead of CoreImage filters.
 
+Image filtering pipeline:
+
+UIImage
+→ CGImage
+→ MTKTextureLoader
+→ MTLTexture
+→ Fragment Shader
+→ UIImage
+
 Implemented filters:
+
 - Normal
 - Invert
 - Mono
