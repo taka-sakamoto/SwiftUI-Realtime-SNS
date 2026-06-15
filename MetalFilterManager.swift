@@ -77,7 +77,7 @@ final class MetalFilterManager {
                 try? textureLoader.newTexture(
                     cgImage: cgImage,
                     options: [
-                        MTKTextureLoader.Option.SRGB : true
+                        MTKTextureLoader.Option.SRGB : false
                     ]
                 )
         else {

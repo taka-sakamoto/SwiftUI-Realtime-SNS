@@ -60,7 +60,6 @@ fragment float4 fragmentShader(
     constexpr sampler s(address::clamp_to_edge,
                         filter::linear);
     
-    //return texture.sample(s, in.texCoord);
     return texture.sample(s, in.uv);
 }
     
@@ -72,7 +71,6 @@ fragment float4 invertFragmentShader(
     constexpr sampler textureSampler;
     
     float4 color =
-    // texture.sample(textureSampler, in.texCoord);
     texture.sample(textureSampler, in.uv);
  
     float3 inverted =
@@ -82,6 +80,7 @@ fragment float4 invertFragmentShader(
            1.0 - color.b
            );
     
+    inverted *= 1.1;
     inverted = saturate(inverted);
 
     return float4(inverted, color.a);
@@ -91,12 +90,14 @@ fragment float4 monoFragmentShader(VertexOut in [[stage_in]],
                                    texture2d<float> texture [[texture(0)]]) {
     constexpr sampler s(address::clamp_to_edge, filter::linear);
     
-    //float4 color = texture.sample(s, in.texCoord);
     float4 color = texture.sample(s, in.uv);
     
-    float gray = (color.r + color.g + color.b) / 3.0;
+    float gray = dot(
+        color.rgb,
+        float3(0.299, 0.587, 0.144)
+    );
     
-    return float4(gray, gray, gray, 1.0);
+    return float4(gray, gray, gray, color.a);
 }
 
 
@@ -104,7 +105,6 @@ fragment float4 sepiaFragmentShader(VertexOut in [[stage_in]],
                                     texture2d<float> texture [[texture(0)]]) {
     constexpr sampler s(address::clamp_to_edge, filter::linear);
     
-    //float4 color = texture.sample(s, in.texCoord);
     float4 color = texture.sample(s, in.uv);
     
     float r = dot(color.rgb, float3(0.393, 0.769, 0.189));
