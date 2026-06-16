@@ -17,6 +17,9 @@ final class CameraManager: NSObject, ObservableObject {
     let session = AVCaptureSession()
     let videoOutput = AVCaptureVideoDataOutput()
     
+    private var videoDeviceInput: AVCaptureDeviceInput?
+    
+    var currentPosition: AVCaptureDevice.Position = .back
     
     weak var renderer: Renderer?
     
@@ -36,11 +39,11 @@ final class CameraManager: NSObject, ObservableObject {
         guard let device = AVCaptureDevice.default(
             .builtInWideAngleCamera,
             for: .video,
-            position: .back
+            position: currentPosition
         ),
         let input = try? AVCaptureDeviceInput(device: device)
         else {
-            print("Camera device error")
+            print("Camera device error")  // ログ用
             session.commitConfiguration()
             return
         }
@@ -48,7 +51,9 @@ final class CameraManager: NSObject, ObservableObject {
         // input
         if session.inputs.isEmpty,
            session.canAddInput(input) {
+            
             session.addInput(input)
+            videoDeviceInput = input
         }
         
         // Output settings
@@ -88,14 +93,60 @@ final class CameraManager: NSObject, ObservableObject {
             }
         }
         
+    }
+    
+    func switchCamera() {
         
+        session.beginConfiguration()
+        
+        if let currentInput = videoDeviceInput {
+            session.removeInput(currentInput)
+        }
+        
+        currentPosition =
+            currentPosition == .back
+            ? .front
+            : .back
+        
+        guard let newDevice = AVCaptureDevice.default(
+            .builtInWideAngleCamera,
+            for: .video,
+            position: currentPosition
+        ) else {
+            session.commitConfiguration()
+            return
+        }
+        
+        do {
+            
+            let newInput = try AVCaptureDeviceInput(device: newDevice)
+            
+            if session.canAddInput(newInput) {
+                session.addInput(newInput)
+                videoDeviceInput = newInput
+                
+           }
+                
+            
+        } catch {
+            print("switch camera error:", error) // ログ用
+        }
+        
+        if let connection = videoOutput.connection(with: .video) {
+            
+            if connection.isVideoRotationAngleSupported(90) {
+                connection.videoRotationAngle = 90
+            }
+        }
+        
+        session.commitConfiguration()
     }
     
     func capturePhoto(filter: FilterType) {
         
         guard let image = renderer?.captureCurrentFrame()
         else {
-            print("capture failed")
+            print("capture failed") // ログ用
             return
         }
         
@@ -126,7 +177,7 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
     ) {
 
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-            print("Failed to get pixel buffer")
+            print("Failed to get pixel buffer") // ログ用
             return
         }
          

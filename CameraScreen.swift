@@ -73,10 +73,27 @@ struct CameraScreen: View {
                                 )
                                 
                         }
+                        
                     }
                 }
                 .frame(maxWidth: .infinity)
                 .offset(y: 6)
+                
+                Spacer()
+                    .frame(height: 10)
+                
+                Button {
+                    
+                    cameraManager.switchCamera()
+                    
+                } label: {
+                    
+                    Label(
+                        "Front / Back",
+                        systemImage: "camera.rotate"
+                    )
+                }
+                .buttonStyle(.borderedProminent)
                 
                 Button {
 
