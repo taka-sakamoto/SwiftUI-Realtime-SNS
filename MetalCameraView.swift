@@ -14,6 +14,7 @@ struct MetalCameraView: UIViewRepresentable {
     @ObservedObject var cameraManager: CameraManager
     
     var selectedFilter: FilterType
+    var intensity: Float
     
     typealias UIViewType = MTKView
     
@@ -62,9 +63,9 @@ struct MetalCameraView: UIViewRepresentable {
     
     func updateUIView(_ uiView: MTKView, context: Context) {
         
-        context.coordinator.renderer?.setFilter(
-            selectedFilter
-        )
+        context.coordinator.renderer?.setFilter(selectedFilter)
+        context.coordinator.renderer?.setIntensity(intensity)
+        
     }
 }
 

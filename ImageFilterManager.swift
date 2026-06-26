@@ -18,7 +18,8 @@ final class ImageFilterManager {
     
     func applyFilter(
         to image: UIImage,
-        filter: FilterType
+        filter: FilterType,
+        intensity: Float
     ) -> UIImage {
         
         guard let ciImage = CIImage(image: image) else {
@@ -36,7 +37,8 @@ final class ImageFilterManager {
             
             return MetalFilterManager.shared.applyFilter(
                 to: image,
-                filter: filter
+                filter: filter,
+                intensity: intensity
             )
         }
     }

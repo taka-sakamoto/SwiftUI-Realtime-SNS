@@ -43,7 +43,8 @@ final class MetalFilterManager {
     
     func applyFilter(
         to image: UIImage,
-        filter: FilterType
+        filter: FilterType,
+        intensity: Float
     ) -> UIImage {
         
         //let normalized = normalizedImage(image)
@@ -147,6 +148,14 @@ final class MetalFilterManager {
         encoder.setRenderPipelineState(pipelineState)
         
         encoder.setFragmentTexture(inputTexture, index: 0)
+        
+        var filterIntensity = intensity
+        
+        encoder.setFragmentBytes(
+            &filterIntensity,
+            length: MemoryLayout<Float>.stride,
+            index: 0
+        )
         
         encoder.drawPrimitives(
             type: .triangleStrip,

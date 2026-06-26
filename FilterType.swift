@@ -12,4 +12,13 @@ enum FilterType: String, CaseIterable {
     case sepia
     case mono
     case invert
+    
+    var hasIntensity: Bool {
+        switch self {
+        case .mono, .sepia:
+            return true
+        default:
+            return false
+        }
+    }
 }

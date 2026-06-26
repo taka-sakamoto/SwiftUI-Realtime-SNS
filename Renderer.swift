@@ -37,6 +37,10 @@ final class Renderer: NSObject, MTKViewDelegate {
     var currentTexture: MTLTexture?
     
     var fragmentFunctionName = "monoFragmentShader"
+    
+    private var currentIntensity: Float = 1.0
+    
+    private var currentFilter: FilterType = .normal
 
     
     init(mtkView: MTKView) {
@@ -177,6 +181,14 @@ final class Renderer: NSObject, MTKViewDelegate {
             texture,
             index: 0
         )
+        
+        var intensity = currentIntensity
+        
+        commandEncoder.setFragmentBytes(
+            &intensity,
+            length: MemoryLayout<Float>.stride,
+            index: 0
+        )
 
         commandEncoder.drawPrimitives(
             type: .triangleStrip,
@@ -234,6 +246,10 @@ final class Renderer: NSObject, MTKViewDelegate {
     
     func setFilter(_ filter: FilterType) {
         
+        guard filter != currentFilter else { return }
+
+        currentFilter = filter
+        
         switch filter {
             
         case .normal:
@@ -250,6 +266,11 @@ final class Renderer: NSObject, MTKViewDelegate {
         }
         
         buildPipeline()
+    }
+    
+    func setIntensity(_ intensity: Float) {
+        currentIntensity = intensity
+        print("Intensity:", intensity)  // ログ用
     }
     
     func captureCurrentFrame() -> UIImage? {

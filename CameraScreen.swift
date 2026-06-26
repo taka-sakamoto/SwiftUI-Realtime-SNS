@@ -13,13 +13,16 @@ struct CameraScreen: View {
     
     @State private var selectedFilter: FilterType = .mono
     
+    @State private var intensity: Float = 1.0
+    
     var body: some View {
         
         ZStack(alignment: .bottom) {
             
             MetalCameraView(
                 cameraManager: cameraManager,
-                selectedFilter:  selectedFilter
+                selectedFilter:  selectedFilter,
+                intensity: intensity
             )
             .ignoresSafeArea()
             
@@ -40,7 +43,9 @@ struct CameraScreen: View {
                         
                         Button {
                             
-                            selectedFilter = filter
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                selectedFilter = filter
+                            }
                             
                         } label: {
                             
@@ -79,6 +84,20 @@ struct CameraScreen: View {
                 .frame(maxWidth: .infinity)
                 .offset(y: 6)
                 
+                if selectedFilter.hasIntensity {
+                    
+                    Slider(
+                        value: Binding(
+                            get: { Double(intensity) },
+                            set: { intensity = Float($0) }
+                        ),
+                        in: 0...1
+                    )
+                    .padding(.horizontal)
+                    .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.2), value: selectedFilter)
+                }
+                
                 Spacer()
                     .frame(height: 10)
                 
@@ -98,7 +117,8 @@ struct CameraScreen: View {
                 Button {
 
                     cameraManager.capturePhoto(
-                        filter: selectedFilter
+                        filter: selectedFilter,
+                        intensity: intensity
                     )
                     
                 } label: {

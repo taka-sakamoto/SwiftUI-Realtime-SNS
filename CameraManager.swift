@@ -142,7 +142,10 @@ final class CameraManager: NSObject, ObservableObject {
         session.commitConfiguration()
     }
     
-    func capturePhoto(filter: FilterType) {
+    func capturePhoto(
+        filter: FilterType,
+        intensity: Float
+    ) {
         
         guard let image = renderer?.captureCurrentFrame()
         else {
@@ -153,7 +156,8 @@ final class CameraManager: NSObject, ObservableObject {
         let filtered =
             MetalFilterManager.shared.applyFilter(
                 to: image,
-                filter: filter
+                filter: filter,
+                intensity: intensity
             )
 
         capturedImage = filtered

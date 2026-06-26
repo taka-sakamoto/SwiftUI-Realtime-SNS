@@ -19,6 +19,8 @@ struct PostUploadView: View {
     
     @State private var selectedFilter: FilterType = .normal
     
+    @State private var intensity: Float = 1.0
+    
     let userName: String
     
     var body: some View {
@@ -32,7 +34,8 @@ struct PostUploadView: View {
                     Image(
                         uiImage: ImageFilterManager.shared.applyFilter(
                             to: image,
-                            filter: selectedFilter
+                            filter: selectedFilter,
+                            intensity: 1.0
                         )
                     )
                     .resizable()
@@ -49,7 +52,8 @@ struct PostUploadView: View {
                                 let previewImage =
                                 ImageFilterManager.shared.applyFilter(
                                     to: image,
-                                    filter: filter
+                                    filter: filter,
+                                    intensity: 1.0
                                 )
                                 
                                 VStack(spacing: 8) {
@@ -96,7 +100,8 @@ struct PostUploadView: View {
                     let filteredImage =
                     ImageFilterManager.shared.applyFilter(
                         to: image,
-                        filter: selectedFilter
+                        filter: selectedFilter,
+                        intensity: 1.0
                     )
                     
                     guard let data =
