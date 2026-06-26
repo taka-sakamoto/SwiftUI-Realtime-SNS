@@ -4,13 +4,23 @@ A real-time SNS app built with SwiftUI, Firebase, and Metal shaders.
 
 ## Features
 
-- Metal-based image filters
-- Real-time filter selection chips
-- SwiftUI modern UI
-- Real-time feed updates with Firestore
-- Firebase Authentication
-- Image uploads with Firebase Storage
-
+- Metal-based image filters  
+- Real-time filter selection chips  
+- Metal filters  
+    • Normal  
+    • Mono  
+    • Sepia  
+    • Invert  
+- SwiftUI modern UI  
+- Real-time feed updates with Firestore  
+- Firebase Authentication  
+- Image uploads with Firebase Storage  
+- Real-time camera preview  
+- Front / Back camera switch  
+- Filter intensity control (Mono / Sepia)  
+- Photo capture  
+- Preview  
+- Save to Photo Library  
 
 ## Screenshots
 
