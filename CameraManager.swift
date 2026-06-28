@@ -13,9 +13,12 @@ import UIKit
 final class CameraManager: NSObject, ObservableObject {
     
     @Published var capturedImage: UIImage?
+    @Published var isRecording = false
+    @Published var didSavedVideo = false
     
     let session = AVCaptureSession()
     let videoOutput = AVCaptureVideoDataOutput()
+    private let movieOutput = AVCaptureMovieFileOutput()
     
     private var videoDeviceInput: AVCaptureDeviceInput?
     
@@ -73,6 +76,10 @@ final class CameraManager: NSObject, ObservableObject {
         if session.outputs.isEmpty,
            session.canAddOutput(videoOutput) {
             session.addOutput(videoOutput)
+        }
+        
+        if session.canAddOutput(movieOutput) {
+            session.addOutput(movieOutput)
         }
 
         // Orientation 重要
@@ -168,8 +175,29 @@ final class CameraManager: NSObject, ObservableObject {
             nil,
             nil
         )
+    }
+    
+    func startRecording() {
+        
+        guard !movieOutput.isRecording else { return }
+        
+        let outputURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension("mov")
+        
+        movieOutput.startRecording(
+            to: outputURL,
+            recordingDelegate: self
+        )
+    }
+    
+    func stopRecording() {
+        guard movieOutput.isRecording else { return }
+        
+        movieOutput.stopRecording()
         
     }
+    
 }
 
 extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -187,5 +215,51 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
          
         renderer?.updateTexture(from: pixelBuffer)
         
+    }
+}
+
+extension CameraManager: AVCaptureFileOutputRecordingDelegate {
+    
+    func fileOutput(
+        _ output: AVCaptureFileOutput,
+        didStartRecordingTo fileURL: URL,
+        from connections: [AVCaptureConnection]
+    ) {
+        
+        DispatchQueue.main.async {
+            self.isRecording = true
+        }
+        
+        print("Recording started")
+    }
+    
+    func fileOutput(
+        _ output: AVCaptureFileOutput,
+        didFinishRecordingTo outputFileURL: URL,
+        from connections: [AVCaptureConnection],
+        error: Error?
+    ) {
+        
+        if let error = error {
+            print("Recording error: \(error)")
+            return
+        }
+        
+        UISaveVideoAtPathToSavedPhotosAlbum(
+            outputFileURL.path,
+            nil,
+            nil,
+            nil
+        )
+        
+        DispatchQueue.main.async {
+            self.didSavedVideo = true
+        }
+        
+        DispatchQueue.main.async {
+            self.isRecording = false
+        }
+        
+        print("Saved!")
     }
 }
