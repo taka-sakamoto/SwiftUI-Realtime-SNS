@@ -19,6 +19,9 @@ This project combines a real-time social feed with a custom Metal-powered camera
 </p>
 
 ## Demo
+A demonstration video will be added in a future update.
+
+(Currently available as a MOV recording in the repository.)
 
 ---
 
