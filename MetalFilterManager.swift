@@ -107,11 +107,11 @@ final class MetalFilterManager {
             
         }
         
-                
-       guard let commandBuffer =
+        
+        guard let commandBuffer =
                 commandQueue.makeCommandBuffer()
         else {
-           print("commandBuffer create failed")
+            print("commandBuffer create failed")
             return image
         }
         
@@ -132,13 +132,13 @@ final class MetalFilterManager {
                 )
         else {
             return image
-
+            
         }
-
+        
         var uniforms = AspectUniforms(
             aspectScale: 1.0
         )
-
+        
         encoder.setVertexBytes(
             &uniforms,
             length: MemoryLayout<AspectUniforms>.stride,
@@ -193,9 +193,9 @@ final class MetalFilterManager {
             space: colorSpace,
             bitmapInfo:
                 CGBitmapInfo.byteOrder32Little.rawValue
-                | CGImageAlphaInfo.premultipliedFirst.rawValue
+            | CGImageAlphaInfo.premultipliedFirst.rawValue
         ),
-        let outputCGImage = context.makeImage()
+              let outputCGImage = context.makeImage()
         else {
             return image
         }
@@ -209,6 +209,109 @@ final class MetalFilterManager {
         )
     }
     
+    func applyFilter(
+        to texture: MTLTexture,
+        filter: FilterType,
+        intensity: Float
+    ) -> MTLTexture? {
+        
+        switch filter {
+            
+        case .invert:
+            fragmentFunctionName = "invertFragmentShader"
+            
+        case .mono:
+            fragmentFunctionName = "monoFragmentShader"
+            
+        case .sepia:
+            fragmentFunctionName = "sepiaFragmentShader"
+            
+        case .normal:
+            return texture
+        }
+        
+        buildPipeline()
+        
+        let inputTexture = texture
+        
+        let textureDescriptor =
+        MTLTextureDescriptor.texture2DDescriptor(
+            pixelFormat: .bgra8Unorm,
+            width: texture.width,
+            height: texture.height,
+            mipmapped: false
+        )
+        
+        textureDescriptor.storageMode = .shared
+        
+        textureDescriptor.usage = [
+            .renderTarget,
+            .shaderRead
+        ]
+        
+        guard let outputTexture =
+                device.makeTexture(descriptor: textureDescriptor)
+        else {
+            return nil
+        }
+        
+        let renderPassDescriptor = MTLRenderPassDescriptor()
+        
+        renderPassDescriptor.colorAttachments[0].texture = outputTexture
+        
+        renderPassDescriptor.colorAttachments[0].clearColor =
+        MTLClearColorMake(0, 0, 0, 1)
+        
+        renderPassDescriptor.colorAttachments[0].loadAction = .clear
+        
+        renderPassDescriptor.colorAttachments[0].storeAction = .store
+        
+        
+        guard let commandBuffer = commandQueue.makeCommandBuffer(),
+              let encoder = commandBuffer.makeRenderCommandEncoder(
+                descriptor: renderPassDescriptor
+              )
+        else {
+            return nil
+        }
+        
+        var uniforms = AspectUniforms(aspectScale: 1.0)
+        
+        encoder.setVertexBytes(
+            &uniforms,
+            length: MemoryLayout<AspectUniforms>.stride,
+            index: 0
+        )
+        
+        encoder.setRenderPipelineState(pipelineState)
+        
+        encoder.setFragmentTexture(
+            inputTexture,
+            index: 0
+        )
+        
+        var filterIntensity = intensity
+        
+        encoder.setFragmentBytes(
+            &filterIntensity,
+            length: MemoryLayout<Float>.stride,
+            index: 0
+        )
+        
+        encoder.drawPrimitives(
+            type: .triangleStrip,
+            vertexStart: 0,
+            vertexCount: 4
+        )
+        
+        encoder.endEncoding()
+        
+        commandBuffer.commit()
+        commandBuffer.waitUntilCompleted()
+        
+        return outputTexture
+    }
+
 
     private func buildPipeline() {
         

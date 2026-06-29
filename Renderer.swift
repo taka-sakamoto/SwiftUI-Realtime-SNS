@@ -38,9 +38,9 @@ final class Renderer: NSObject, MTKViewDelegate {
     
     var fragmentFunctionName = "monoFragmentShader"
     
-    private var currentIntensity: Float = 1.0
+    private(set) var currentIntensity: Float = 1.0
     
-    private var currentFilter: FilterType = .normal
+    private(set) var currentFilter: FilterType = .normal
 
     
     init(mtkView: MTKView) {

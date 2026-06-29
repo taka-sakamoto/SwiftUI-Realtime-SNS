@@ -18,13 +18,15 @@ final class CameraManager: NSObject, ObservableObject {
     
     let session = AVCaptureSession()
     let videoOutput = AVCaptureVideoDataOutput()
-    private let movieOutput = AVCaptureMovieFileOutput()
+    // private let movieOutput = AVCaptureMovieFileOutput()
     
     private var videoDeviceInput: AVCaptureDeviceInput?
     
     var currentPosition: AVCaptureDevice.Position = .back
     
     weak var renderer: Renderer?
+    
+    private let videoRecorder = VideoRecorder()
     
     override init() {
         super.init()
@@ -78,9 +80,11 @@ final class CameraManager: NSObject, ObservableObject {
             session.addOutput(videoOutput)
         }
         
+        /*
         if session.canAddOutput(movieOutput) {
             session.addOutput(movieOutput)
         }
+        */
 
         // Orientation 重要
         if let connection = videoOutput.connection(with: .video) {
@@ -179,22 +183,48 @@ final class CameraManager: NSObject, ObservableObject {
     
     func startRecording() {
         
-        guard !movieOutput.isRecording else { return }
-        
         let outputURL = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString)
             .appendingPathExtension("mov")
         
-        movieOutput.startRecording(
-            to: outputURL,
-            recordingDelegate: self
-        )
+        do {
+            try videoRecorder.startRecording(
+                url: outputURL,
+                size: CGSize(width: 1080, height: 1920)
+            )
+            
+            isRecording = true
+            
+        } catch {
+            
+            print(error)
+            
+        }
     }
     
     func stopRecording() {
-        guard movieOutput.isRecording else { return }
-        
-        movieOutput.stopRecording()
+       
+        videoRecorder.finish { [weak self] url in
+            
+            guard let self else { return }
+            
+            guard let url else { return }
+            
+            UISaveVideoAtPathToSavedPhotosAlbum(
+                url.path,
+                nil,
+                nil,
+                nil
+            )
+            
+            DispatchQueue.main.async {
+                
+                self.isRecording = false
+                self.didSavedVideo = true
+                
+            }
+
+        }
         
     }
     
@@ -215,9 +245,30 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
          
         renderer?.updateTexture(from: pixelBuffer)
         
+        if isRecording,
+           let texture = renderer?.currentTexture,
+           let filter = renderer?.currentFilter,
+           let intensity = renderer?.currentIntensity,
+           let filteredTexture = MetalFilterManager.shared.applyFilter(
+            to: texture,
+            filter: filter,
+            intensity: intensity
+            ),
+           let pixelBuffer = renderer?.createPixelBuffer(from: filteredTexture)
+        {
+            
+            let time = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+        
+            videoRecorder.append(
+                pixelBuffer: pixelBuffer,
+                at: time
+            )
+        }
+        
     }
 }
 
+/*
 extension CameraManager: AVCaptureFileOutputRecordingDelegate {
     
     func fileOutput(
@@ -263,3 +314,4 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
         print("Saved!")
     }
 }
+*/
