@@ -7,6 +7,9 @@ This project combines a real-time social feed with a custom Metal-powered camera
 ---
 ## Screenshots
 
+> Coming soon
+
+<!--
 <p float="left">
   <img src="screenshots/feed.png" width="250" />
   <img src="screenshots/metalfilter.png" width="250" />
@@ -17,6 +20,7 @@ This project combines a real-time social feed with a custom Metal-powered camera
   <img src="screenshots/fullscreen.png" width="250" />
   <img src="screenshots/filter.png" width="250" />
 </p>
+-->
 
 ## Demo
 A demonstration video will be added in a future update.
