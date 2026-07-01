@@ -26,6 +26,8 @@ struct ProfileView: View {
     @State private var selectedImageItem:
     SelectedImage?
     
+    @State private var showingEditProfile = false
+    
     var body: some View {
         
         ZStack {
@@ -37,12 +39,41 @@ struct ProfileView: View {
                         .fill(Color.gray.opacity(0.3))
                         .frame(width: 100, height: 100)
                         .overlay(
-                            Text(String(userName.prefix(1)))
-                                .font(.largeTitle)
+                            Text(
+                                String(
+                                    (viewModel.user?.displayName ?? userName)
+                                        .prefix(1)
+                                )
+                            )
+                            .font(.largeTitle)
                         )
                     
-                    Text(userName)
+                    Text(viewModel.user?.displayName ?? userName)
                         .font(.title2)
+                        .fontWeight(.bold)
+                    
+                    if let bio = viewModel.user?.bio,
+                       !bio.isEmpty {
+                        
+                        Text(bio)
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
+                    
+                    Button {
+                        showingEditProfile = true
+                    } label: {
+                        Text("Edit Profile")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(Color(.systemGray6))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .padding(.horizontal)
                     
                     LazyVGrid(columns: columns, spacing: 2) {
                         
@@ -104,6 +135,11 @@ struct ProfileView: View {
             }
             .onAppear {
                 viewModel.fetchMyPosts()
+                
+                Task {
+                    
+                    await viewModel.loadUser()
+                }
             }
            
             if let item = selectedImageItem {
@@ -122,9 +158,12 @@ struct ProfileView: View {
                         }
                     }
                 )
-                // .transition(.scale)
+                
                 .zIndex(1)
             }
+        }
+        .sheet(isPresented: $showingEditProfile) {
+            EditProfileView(viewModel: viewModel)
         }
     }
 
