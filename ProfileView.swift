@@ -35,18 +35,12 @@ struct ProfileView: View {
                 
                 VStack(spacing: 16) {
                     
-                    Circle()
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: 100, height: 100)
-                        .overlay(
-                            Text(
-                                String(
-                                    (viewModel.user?.displayName ?? userName)
-                                        .prefix(1)
-                                )
-                            )
-                            .font(.largeTitle)
-                        )
+                    ProfileImageView(
+                        imageURL: viewModel.user?.profileImageURL,
+                        selectedImage: nil,
+                        displayName: viewModel.user?.displayName
+                    )
+                    .frame(width: 100, height: 100)
                     
                     Text(viewModel.user?.displayName ?? userName)
                         .font(.title2)

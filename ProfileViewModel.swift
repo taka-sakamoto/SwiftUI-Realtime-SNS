@@ -9,6 +9,7 @@ import Foundation
 import FirebaseFirestore
 import FirebaseAuth
 import Combine
+import UIKit
 
 final class ProfileViewModel: ObservableObject {
     
@@ -20,6 +21,7 @@ final class ProfileViewModel: ObservableObject {
     
     private let db = Firestore.firestore()
     private let repository = UserRepository()
+    private let imageUploader = ProfileImageUploader()
     
     func loadUser() async {
 
@@ -111,5 +113,31 @@ final class ProfileViewModel: ObservableObject {
                 }
                 
             }
+    }
+    
+    @MainActor
+    func updateProfileImage(_ image: UIImage) async {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        do {
+            let imageURL = try await imageUploader.upload(
+                image: image,
+                uid: uid
+            )
+            
+            try await repository.updateProfileImage(
+                uid: uid,
+                imageURL: imageURL
+            )
+            
+            user?.profileImageURL = imageURL
+            user?.updatedAt = Date()
+            
+        } catch {
+            print("Failed to update profile image:", error)
+        }
     }
 }

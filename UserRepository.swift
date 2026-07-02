@@ -74,4 +74,20 @@ final class UserRepository {
                 "updatedAt": user.updatedAt
             ], merge: true)
     }
+    
+    func updateProfileImage(
+        uid: String,
+        imageURL: String
+    ) async throws {
+        
+        let data: [String: Any] = [
+            "profileImageURL": imageURL,
+            "updatedAt": Timestamp(date: Date())
+        ]
+        
+        try await db
+            .collection("users")
+            .document(uid)
+            .updateData(data)
+    }
 }
