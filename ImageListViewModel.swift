@@ -15,9 +15,56 @@ import FirebaseAuth
 class ImageListViewModel: ObservableObject {
     @Published var posts: [Post] = []
     
+    @Published var users: [String: User] = [:]
+    
     private var isLoading = false
     
     private var listener: ListenerRegistration?
+    
+    private let userRepository = UserRepository()
+    
+    private var userListeners: [String: ListenerRegistration] = [:]
+    
+    
+    @MainActor
+    func fetchUserIfNeeded(uid: String) async {
+        
+        guard users[uid] == nil else {
+            return
+        }
+        
+        do {
+            
+            let user = try await userRepository.fetchUser(uid: uid)
+            
+            users[uid] = user
+            
+        } catch {
+            
+            print("Failed to fetch user:", error)
+        }
+    }
+    
+    
+    func listenUser(uid: String) {
+        
+
+        guard userListeners[uid] == nil else {
+            return
+        }
+
+        let listener = userRepository.listenUser(uid: uid) { [weak self] user in
+
+            guard let self else { return }
+
+            Task { @MainActor in
+                self.users[uid] = user
+            }
+        }
+
+        userListeners[uid] = listener
+        
+    }
     
     func startListening() {
         guard listener == nil else { return }
@@ -49,6 +96,10 @@ class ImageListViewModel: ObservableObject {
                     )
                 }
                 .sorted { $0.createdAt > $1.createdAt }
+                
+                for post in self.posts {
+                    self.listenUser(uid: post.userId)
+                }
             }
     }
     
@@ -76,6 +127,14 @@ class ImageListViewModel: ObservableObject {
     
     func toggleLike(post: Post) {
         FirebaseService.shared.toggleLike(post: post)
+    }
+    
+    deinit {
+        listener?.remove()
+        
+        userListeners.values.forEach {
+            $0.remove()
+        }
     }
     
     

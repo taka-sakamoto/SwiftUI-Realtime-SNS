@@ -42,7 +42,6 @@ final class UserRepository {
             updatedAt: updatedTimeStamp?.dateValue() ?? Date()
         )
         
-        return try document.data(as: User.self)
     }
     
     // MARK: - Create User
@@ -75,6 +74,8 @@ final class UserRepository {
             ], merge: true)
     }
     
+    // MARK: - Update ProfileImage
+    
     func updateProfileImage(
         uid: String,
         imageURL: String
@@ -89,5 +90,47 @@ final class UserRepository {
             .collection("users")
             .document(uid)
             .updateData(data)
+    }
+    
+    // MARK: - Listen User
+    
+    func listenUser(
+        uid: String,
+        onChange: @escaping (User?) -> Void
+    ) -> ListenerRegistration {
+        
+        db.collection("users")
+            .document(uid)
+            .addSnapshotListener { snapshot, error in
+                
+                if let error = error {
+                    print("Failed to listen user: \(error)")
+                    onChange(nil)
+                    return
+                }
+                
+                guard
+                    let snapshot = snapshot,
+                    let data = snapshot.data()
+                else {
+                    onChange(nil)
+                    return
+                }
+                
+                let createdAt = data["createdAt"] as? Timestamp
+                let updatedAt = data["updatedAt"] as? Timestamp
+                
+                let user = User(
+                    id: uid,
+                    displayName: data["displayName"] as? String ?? "",
+                    bio: data["bio"] as? String ?? "",
+                    profileImageURL: data["profileImageURL"] as? String ?? "",
+                    createdAt: createdAt?.dateValue() ?? Date(),
+                    updatedAt: updatedAt?.dateValue() ?? Date()
+                )
+                
+                onChange(user)
+                
+            }
     }
 }

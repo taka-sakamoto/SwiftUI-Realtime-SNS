@@ -12,12 +12,11 @@ import FirebaseFirestore
 import FirebaseStorage
 
 class PostViewModel: ObservableObject {
+    
     @Published var posts: [Post] = []
     
     private var listener: ListenerRegistration?
     
-
-
     func startListening() {
         guard listener == nil else { return }
         
@@ -32,8 +31,8 @@ class PostViewModel: ObservableObject {
                     let data = doc.data()
                     
                     // createdAt取得（重要）
-                    let timestamp = data["createdAt"] as? Timestamp
-                    guard let timestamp = data["creatAt"] as? Timestamp else { return nil }
+                    // let timestamp = data["createdAt"] as? Timestamp
+                    guard let timestamp = data["createdAt"] as? Timestamp else { return nil }
                     let date = timestamp.dateValue()
                     
                     return Post(
@@ -49,6 +48,7 @@ class PostViewModel: ObservableObject {
                     )
                 }
                 .sorted { $0.createdAt > $1.createdAt }
+                
             }
         
     }

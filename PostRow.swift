@@ -10,10 +10,13 @@ import FirebaseAuth
 
 struct PostRow: View {
     let post: Post
+    let user: User?
+    
     let onDelete: () -> Void
     let onTap: () -> Void
     let onLike: () -> Void
     let onComment: () -> Void
+    
     let namespace: Namespace.ID
     let isSource: Bool
     
@@ -34,18 +37,16 @@ struct PostRow: View {
 
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
-                Circle()
-                    // .fill(Color.gray.opacity(0.2))
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(width: 36, height: 36)
-                    .overlay(
-                        Text(String(post.userName.prefix(1)))
-                            .font(.headline)
-                    )
+                ProfileImageView(
+                    imageURL: user?.profileImageURL,
+                    selectedImage: nil,
+                    displayName: user?.displayName ?? post.userName
+                )
+                .frame(width: 36, height: 36)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     
-                    Text(post.userName)
+                    Text(user?.displayName ?? post.userName)
                         .font(.headline)
                     
                     Text(relativeDate(post.createdAt))

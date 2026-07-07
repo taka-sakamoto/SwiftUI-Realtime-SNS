@@ -83,9 +83,12 @@ struct ContentView: View {
                     // 画像一覧
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
+            
                             ForEach(viewModel.posts) { post in
+                                
                                 PostRow(
                                     post: post,
+                                    user: viewModel.users[post.userId],
                                     onDelete: {
                                         viewModel.deletePost(post: post)
                                     },
