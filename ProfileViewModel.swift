@@ -23,21 +23,22 @@ final class ProfileViewModel: ObservableObject {
     private let repository = UserRepository()
     private let imageUploader = ProfileImageUploader()
     
+    private var postsListener: ListenerRegistration?
+    
+    
     func loadUser() async {
 
         guard let uid = Auth.auth().currentUser?.uid else {
             return
         }
-        
-        print("Current UID", uid)  // ログ用
 
         isLoading = true
 
         do {
             user = try await repository.fetchUser(uid: uid)
-            print("Loaded User:", user)  // ログ用
+
         } catch {
-            print("Load Error:", error)  // ログ用
+            
             errorMessage = error.localizedDescription
         }
 
@@ -78,26 +79,22 @@ final class ProfileViewModel: ObservableObject {
     
     func fetchMyPosts() {
         
-        guard let uid = Auth.auth().currentUser?.uid
-        else { return }
+        guard postsListener == nil else { return }
         
-        db.collection("posts")
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        postsListener = db.collection("posts")
             .whereField("userId", isEqualTo: uid)
             .order(by: "createdAt", descending: true)
-            .addSnapshotListener { snapshot, error in
+            .addSnapshotListener { [weak self] snapshot, error in
                 
-                guard let documents = snapshot?.documents
-                else { return }
+                guard let self else { return }
+                guard let documents = snapshot?.documents else { return }
                 
-                self.posts = documents.compactMap { doc in
+                let posts = documents.compactMap { doc -> Post in
                     
                     let data = doc.data()
-                    
-                    let timestamp =
-                    data["createdAt"] as? Timestamp
-                    
-                    let date =
-                    timestamp?.dateValue() ?? Date()
+                    let timestamp = data["createdAt"] as? Timestamp
                     
                     return Post(
                         id: doc.documentID,
@@ -106,14 +103,26 @@ final class ProfileViewModel: ObservableObject {
                         userName: data["userName"] as? String ?? "",
                         imagePath: data["imagePath"] as? String ?? "",
                         filterName: data["filterName"] as? String,
-                        createdAt: date,
+                        createdAt: timestamp?.dateValue() ?? Date(),
                         likedBy: data["likedBy"] as? [String] ?? [],
                         commentCount: data["commentCount"] as? Int ?? 0
                     )
+                    
+                }
+                
+                Task { @MainActor in
+                    self.posts = posts
+                    print("Profile posts updated:", self.posts.count)
+                    
                 }
                 
             }
     }
+    
+    deinit {
+        postsListener?.remove()
+    }
+    
     
     @MainActor
     func updateProfileImage(_ image: UIImage) async {

@@ -71,9 +71,12 @@ struct ProfileView: View {
                     
                     LazyVGrid(columns: columns, spacing: 2) {
                         
-                        ForEach(viewModel.posts) { post in
+                        ForEach(viewModel.posts, id: \.id) { post in
                             
-                            AsyncImage(url: URL(string: post.imageUrl)) { phase in
+                            AsyncImage(
+                                url: URL(string: post.imageUrl)
+                                // transaction: Transaction(animation: .easeInOut)
+                            ) { phase in
                                 
                                 switch phase {
                                     
@@ -83,44 +86,30 @@ struct ProfileView: View {
                                         .resizable()
                                         .scaledToFill()
                                         .frame(width: 120, height: 120)
-                                        .contentShape(Rectangle())
                                         .clipped()
                                         
-                                        .onTapGesture {
-                                            
-                                            withAnimation(.spring(
-                                                response: 0.45,
-                                                dampingFraction: 0.82
-                                            )) {
-                                                
-                                                selectedImageItem =
-                                                SelectedImage(
-                                                    id: post.id,
-                                                    url: post.imageUrl
-                                                )
-                                            }
-                                        }
-                                    
                                 case .empty:
                                     
                                     ProgressView()
                                         .frame(width: 120, height: 120)
                                     
-                                case .failure:
+                                case .failure(let error):
                                     
                                     Color.gray
-                                        .frame(width: 120, height: 120)
+                                            .frame(width: 120, height: 120)
+                                            .onAppear {
+                                                #if DEBUG
+                                                print("AsyncImage Error:", error)
+                                                #endif
+                                            }
+
                                     
                                 @unknown default:
                                     
                                     EmptyView()
                                 }
                             }
-                            .matchedGeometryEffect(
-                                id: post.id,
-                                in: namespace,
-                                isSource: selectedImageItem == nil
-                            )
+                            .id(post.id)
                         }
                     }
                 }
@@ -134,6 +123,7 @@ struct ProfileView: View {
                     
                     await viewModel.loadUser()
                 }
+                print("Profile appear") // デバッグ
             }
            
             if let item = selectedImageItem {

@@ -104,11 +104,19 @@ struct PostUploadView: View {
                         intensity: 1.0
                     )
                     
+                    let resizedImage = filteredImage.resized(toWidth: 720)
+                    
                     guard let data =
-                            filteredImage.jpegData(compressionQuality: 0.8)
+                            resizedImage.jpegData(compressionQuality: 0.6)
                     else {
                         return
                     }
+                    
+                    print(  // デバッグ
+                        "Upload image size:",
+                        data.count / 1024,
+                        "KB"
+                    )  // ここまで
 
                     uploadImage(
                         data: data,
@@ -176,6 +184,40 @@ struct PostUploadView: View {
         }
     }
     
+}
+
+extension UIImage {
+
+    func resized(toWidth width: CGFloat) -> UIImage {
+
+        let scale = width / size.width
+
+        let height = size.height * scale
+
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1.0
+        format.opaque = true
+
+        let renderer = UIGraphicsImageRenderer(
+            size: CGSize(
+                width: width,
+                height: height
+            ),
+            format: format
+        )
+
+        return renderer.image { _ in
+            
+            self.draw(
+                in: CGRect(
+                    x: 0,
+                    y: 0,
+                    width: width,
+                    height: height
+                )
+            )
+        }
+    }
 }
 
 
