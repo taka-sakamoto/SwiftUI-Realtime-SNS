@@ -72,7 +72,7 @@ struct ProfileView: View {
                     LazyVGrid(columns: columns, spacing: 2) {
                         
                         ForEach(viewModel.posts, id: \.id) { post in
-                            
+                       
                             AsyncImage(
                                 url: URL(string: post.imageUrl)
                                 // transaction: Transaction(animation: .easeInOut)
@@ -87,7 +87,7 @@ struct ProfileView: View {
                                         .scaledToFill()
                                         .frame(width: 120, height: 120)
                                         .clipped()
-                                        
+                                    
                                 case .empty:
                                     
                                     ProgressView()
@@ -102,7 +102,7 @@ struct ProfileView: View {
                                                 print("AsyncImage Error:", error)
                                                 #endif
                                             }
-
+                                    
                                     
                                 @unknown default:
                                     
@@ -111,6 +111,7 @@ struct ProfileView: View {
                             }
                             .id(post.id)
                         }
+                        
                     }
                 }
                 
@@ -119,10 +120,13 @@ struct ProfileView: View {
             .onAppear {
                 viewModel.fetchMyPosts()
                 
-                Task {
-                    
-                    await viewModel.loadUser()
+                if viewModel.user == nil {
+                    Task {
+                        
+                        await viewModel.loadUser()
+                    }
                 }
+            
                 print("Profile appear") // デバッグ
             }
            

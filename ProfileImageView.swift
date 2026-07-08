@@ -29,7 +29,7 @@ struct ProfileImageView: View {
                 let url = URL(string: imageURL) {
                     
                     AsyncImage(url: url) { phase in
-                        
+                         
                         switch phase {
                             
                         case .empty:
