@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import SwiftUI
+import Kingfisher
 
 struct FullScreenImageView: View {
     let imageUrl: String
@@ -25,28 +26,13 @@ struct FullScreenImageView: View {
             Color.black
                 .ignoresSafeArea()
             
-            AsyncImage(url: URL(string: imageUrl)) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFit()
-                        
-                        .frame(
-                            maxWidth: 350,
-                            maxHeight: 600
-                        )
-
-                case .empty:
-                    ProgressView()
-                    
-                case .failure:
-                    Color.gray
-                    
-                @unknown default:
-                    EmptyView()
-                }
-            }
+            KFImage(URL(string: imageUrl))
+                .resizable()
+                .scaledToFit()
+                .frame(
+                    maxWidth: 350,
+                    maxHeight: 600
+                )
             
             .matchedGeometryEffect(
                 id: postId,

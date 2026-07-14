@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseAuth
+import Kingfisher
 
 struct PostRow: View {
     let post: Post
@@ -59,23 +60,9 @@ struct PostRow: View {
             }
             
             ZStack {
-                AsyncImage(url: URL(string: post.imageUrl)) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFit() // 元比率維持
-  
-                    case .empty:
-                        ProgressView()
-                        
-                    case .failure:
-                        Color.gray
-                        
-                    @unknown default:
-                        EmptyView()
-                    }
-                }
+                KFImage(URL(string: post.imageUrl))
+                    .resizable()
+                    .scaledToFit()
                 
                 // 中央ハート❤️
                 if showBigHeart {

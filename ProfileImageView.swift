@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct ProfileImageView: View {
     
@@ -28,25 +29,11 @@ struct ProfileImageView: View {
                 !imageURL.isEmpty,
                 let url = URL(string: imageURL) {
                     
-                    AsyncImage(url: url) { phase in
-                         
-                        switch phase {
-                            
-                        case .empty:
-                            ProgressView()
-                            
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .scaledToFill()
-                            
-                        case .failure(_):
-                            placeholderView
-                            
-                        @unknown default:
-                            placeholderView
-                        }
-                    }
+                KFImage(url)
+                    .resizable()
+                    .scaledToFill()
+                    
+                    
             } else {
                 
                 placeholderView

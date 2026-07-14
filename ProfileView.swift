@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct ProfileView: View {
     
@@ -72,44 +73,19 @@ struct ProfileView: View {
                     LazyVGrid(columns: columns, spacing: 2) {
                         
                         ForEach(viewModel.posts, id: \.id) { post in
-                       
-                            AsyncImage(
-                                url: URL(string: post.imageUrl)
-                                // transaction: Transaction(animation: .easeInOut)
-                            ) { phase in
-                                
-                                switch phase {
-                                    
-                                case .success(let image):
-                                    
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 120, height: 120)
-                                        .clipped()
-                                    
-                                case .empty:
-                                    
+                            
+                            KFImage(URL(string: post.imageUrl))
+                                .resizable()
+                                .placeholder {
                                     ProgressView()
                                         .frame(width: 120, height: 120)
-                                    
-                                case .failure(let error):
-                                    
-                                    Color.gray
-                                            .frame(width: 120, height: 120)
-                                            .onAppear {
-                                                #if DEBUG
-                                                print("AsyncImage Error:", error)
-                                                #endif
-                                            }
-                                    
-                                    
-                                @unknown default:
-                                    
-                                    EmptyView()
                                 }
-                            }
-                            .id(post.id)
+                                .scaledToFill()
+                                .frame(width: 120, height: 120)
+                                .clipped()
+                                .id(post.id)
+                       
+                            
                         }
                         
                     }
