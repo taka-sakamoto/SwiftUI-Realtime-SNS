@@ -67,19 +67,17 @@ This project was developed as a portfolio application to showcase practical iOS 
 ---
 
 ## Screenshots
+|Feed|Camera|
+|---|---|
+|<img src="screenshots/feed.png" width="250" />|<img src="screenshots/camera.png" width="250" />|
 
-<p float="left">
-  <img src="screenshots/feed.png" width="250" />
-  <img src="screenshots/camera.png" width="250" />
-</p>
-<p align="left">
-  <img src="screenshots/metalfilter.png" width="250" />
-  <img src="screenshots/newpost.png" width="250" />
-</p>
-<p float="left">
-  <img src="screenshots/profile.png" width="250" />
-  <img src="screenshots/fullscreen.png" width="250" />
-</p>
+|Filter|New Post|
+|---|---|
+|<img src="screenshots/metalfilter.png" width="250" />|<img src="screenshots/newpost.png" width="250" />|
+
+|Profile|Image Viewer|
+|---|---|
+|<img src="screenshots/profile.png" width="250" />|<img src="screenshots/fullscreen.png" width="250" />|
 
  ---
  
