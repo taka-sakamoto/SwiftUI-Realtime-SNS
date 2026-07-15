@@ -73,7 +73,7 @@ This project was developed as a portfolio application to showcase practical iOS 
   <img src="screenshots/camera.png" width="250" />
 </p>
 <p align="left">
-  <img src="screenshots/filter.png" width="250" />
+  <img src="screenshots/metalfilter.png" width="250" />
   <img src="screenshots/newpost.png" width="250" />
 </p>
 <p float="left">
