@@ -1,61 +1,92 @@
 # SwiftUI Realtime SNS
 
-An iOS social networking application built with **SwiftUI**, **Firebase**, **AVFoundation**, and **Metal**.
+## Overview
 
-This project combines a real-time social feed with a custom Metal-powered camera. Users can capture photos and videos with GPU-accelerated filters and share them through the application.
+SwiftUI Realtime SNS is an iOS social networking application built with SwiftUI, Metal, and Firebase.
 
----
-## Screenshots
+The app features real-time Metal camera filters, photo and video capture, and seamless integration with Firebase Authentication, Cloud Firestore, and Firebase Storage. Users can capture photos with live filters, adjust filters before posting, upload images to the cloud, and interact with posts through likes and profile management.
 
-> Coming soon
+The project follows the MVVM architecture and demonstrates modern iOS development using Swift Concurrency (async/await), Firebase services, Metal image processing, and efficient image loading with Kingfisher.
 
-<!--
-<p float="left">
-  <img src="screenshots/feed.png" width="250" />
-  <img src="screenshots/metalfilter.png" width="250" />
-  <img src="screenshots/comments.png" width="250" />
-</p>
-<p align="left">
-  <img src="screenshots/userpage.png" width="250" />
-  <img src="screenshots/fullscreen.png" width="250" />
-  <img src="screenshots/filter.png" width="250" />
-</p>
--->
-
-## Demo
-A demonstration video will be added in a future update.
-
-(Currently available as a MOV recording in the repository.)
+This project was developed as a portfolio application to showcase practical iOS development skills, combining camera technology, image processing, cloud services, and responsive SwiftUI user interfaces.
 
 ---
 
 ## ✨ Features
 
-### 📷 Camera
+### Authentication
+- Anonymous sign-in with Firebase Authentication
 
-- Real-time camera preview
-- Metal-based GPU rendering
-- Normal / Mono / Sepia / Invert filters
+### Feed
+
+- View posts in real time using Cloud Firestore
+- Like posts
+- Double-tap to like
+- Full-screen image viewer
+- Pinch-to-zoom image support
+- Optimized image loading with Kingfisher
+
+### Camera
+
+- Real-time Metal camera preview
+- Sepia, Mono, and Invert filters
 - Adjustable filter intensity
-- Front / Back camera switching
-- Photo capture
-- Filtered photo saving
+- Front and rear camera switching
+- Filtered photo capture
 - Filtered video recording
-- Save to Photo Library
-- REC indicator
-- Recording completion toast
+- Save captured media to the Photos library
 
-### 📰 Feed
+### Posting
 
-- Firebase Firestore integration
-- Real-time feed
-- Image posts
+- Upload photos from the Photo Library
+- Direct camera-to-post workflow
+- Edit filters before uploading
+- Automatic image resizing (720 px)
+- JPEG compression for optimized uploads
+- Upload images to Firebase Storage
+- Store post metadata in Cloud Firestore
 
-### 👤 Profile
+### Profile
 
+- Edit display name and bio
+- Upload and update profile images
+- View your own posts
+- Cached profile images with Kingfisher
+
+### Architecture
+
+- MVVM architecture
+- Swift Concurrency (async/await)
 - Firebase Authentication
-- User profile
-- Profile editing (In Progress)
+- Cloud Firestore
+- Firebase Storage
+- Metal
+- AVFoundation
+- Kingfisher
+
+---
+
+## Screenshots
+
+<p float="left">
+  <img src="screenshots/feed.png" width="250" />
+  <img src="screenshots/camera.png" width="250" />
+</p>
+<p align="left">
+  <img src="screenshots/filter.png" width="250" />
+  <img src="screenshots/newpost.png" width="250" />
+</p>
+<p float="left">
+  <img src="screenshots/profile.png" width="250" />
+  <img src="screenshots/fullscreen.png" width="250" />
+</p>
+
+ ---
+ 
+## Demo
+A demonstration video will be added in a future update.
+
+(Currently available as a MOV recording in the repository.)
 
 ---
 
