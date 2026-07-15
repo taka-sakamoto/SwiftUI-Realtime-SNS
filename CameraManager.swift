@@ -12,6 +12,7 @@ import UIKit
 
 final class CameraManager: NSObject, ObservableObject {
     
+    @Published var capturedOriginalImage: UIImage?
     @Published var capturedImage: UIImage?
     @Published var isRecording = false
     @Published var didSavedVideo = false
@@ -79,12 +80,6 @@ final class CameraManager: NSObject, ObservableObject {
            session.canAddOutput(videoOutput) {
             session.addOutput(videoOutput)
         }
-        
-        /*
-        if session.canAddOutput(movieOutput) {
-            session.addOutput(movieOutput)
-        }
-        */
 
         // Orientation 重要
         if let connection = videoOutput.connection(with: .video) {
@@ -164,6 +159,9 @@ final class CameraManager: NSObject, ObservableObject {
             return
         }
         
+        // 投稿編集用の元画像
+        capturedOriginalImage = image
+                
         let filtered =
             MetalFilterManager.shared.applyFilter(
                 to: image,
@@ -171,13 +169,22 @@ final class CameraManager: NSObject, ObservableObject {
                 intensity: intensity
             )
 
+        // カメラプレビュー用
         capturedImage = filtered
         
+        // Photos保存用
         UIImageWriteToSavedPhotosAlbum(
             filtered,
             nil,
             nil,
             nil
+        )
+        
+        print(              // デバッグ用
+            "original:",
+            image.size,
+            "filtered:",
+            filtered.size
         )
     }
     
@@ -268,50 +275,3 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
     }
 }
 
-/*
-extension CameraManager: AVCaptureFileOutputRecordingDelegate {
-    
-    func fileOutput(
-        _ output: AVCaptureFileOutput,
-        didStartRecordingTo fileURL: URL,
-        from connections: [AVCaptureConnection]
-    ) {
-        
-        DispatchQueue.main.async {
-            self.isRecording = true
-        }
-        
-        print("Recording started")
-    }
-    
-    func fileOutput(
-        _ output: AVCaptureFileOutput,
-        didFinishRecordingTo outputFileURL: URL,
-        from connections: [AVCaptureConnection],
-        error: Error?
-    ) {
-        
-        if let error = error {
-            print("Recording error: \(error)")
-            return
-        }
-        
-        UISaveVideoAtPathToSavedPhotosAlbum(
-            outputFileURL.path,
-            nil,
-            nil,
-            nil
-        )
-        
-        DispatchQueue.main.async {
-            self.didSavedVideo = true
-        }
-        
-        DispatchQueue.main.async {
-            self.isRecording = false
-        }
-        
-        print("Saved!")
-    }
-}
-*/

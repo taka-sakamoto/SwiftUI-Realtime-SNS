@@ -17,11 +17,36 @@ struct PostUploadView: View {
     @State private var showPicker = false
     @State private var pickedImage: UIImage?
     
-    @State private var selectedFilter: FilterType = .normal
+    @State private var selectedFilter: FilterType
     
-    @State private var intensity: Float = 1.0
+    @State private var intensity: Float
     
     let userName: String
+    
+    let isFromCamera: Bool
+    
+    init(
+        initialImage: UIImage? = nil,
+        initialFilter: FilterType = .normal,
+        initialIntensity: Float = 1.0,
+        userName: String,
+        isFromCamera: Bool = false
+    ) {
+        self.userName = userName
+        self.isFromCamera = isFromCamera
+    
+        _pickedImage = State(
+            initialValue: initialImage
+        )
+        
+        _selectedFilter = State(
+            initialValue: initialFilter
+        )
+        
+        _intensity = State(
+            initialValue: initialIntensity
+        )
+    }
     
     var body: some View {
         
@@ -31,16 +56,17 @@ struct PostUploadView: View {
                 
                 if let image = pickedImage {
                     
-                    Image(
-                        uiImage: ImageFilterManager.shared.applyFilter(
+                    let previewImage =
+                        ImageFilterManager.shared.applyFilter(
                             to: image,
                             filter: selectedFilter,
-                            intensity: 1.0
+                            intensity: intensity
                         )
-                    )
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 300)
+                    
+                    Image(uiImage: previewImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 300)
               
                 
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -87,8 +113,10 @@ struct PostUploadView: View {
                     .padding(.horizontal)
                 }
                 
-                Button("画像を選択") {
-                    showPicker = true
+                if !isFromCamera {
+                    Button("画像を選択") {
+                        showPicker = true
+                    }
                 }
                 
                 Button("投稿") {
@@ -98,11 +126,11 @@ struct PostUploadView: View {
                     guard let uid = Auth.auth().currentUser?.uid else { return }
                     
                     let filteredImage =
-                    ImageFilterManager.shared.applyFilter(
-                        to: image,
-                        filter: selectedFilter,
-                        intensity: 1.0
-                    )
+                        ImageFilterManager.shared.applyFilter(
+                            to: image,
+                            filter: selectedFilter,
+                            intensity: intensity
+                        )
                     
                     let resizedImage = filteredImage.resized(toWidth: 720)
                     

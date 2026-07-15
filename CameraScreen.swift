@@ -9,6 +9,9 @@ import SwiftUI
 
 struct CameraScreen: View {
     
+    @AppStorage("userName")
+    private var userName = ""
+    
     @StateObject private var cameraManager = CameraManager()
     
     @State private var selectedFilter: FilterType = .mono
@@ -19,6 +22,8 @@ struct CameraScreen: View {
     private let shutterButtonSize: CGFloat = 80
    
     @State private var showVideoSavedMessage = false
+    
+    @State private var showPostUpload = false
     
     var body: some View {
         
@@ -53,6 +58,19 @@ struct CameraScreen: View {
                 }
                 
                 cameraManager.didSavedVideo = false
+            }
+        }
+        .sheet(isPresented: $showPostUpload) {
+            
+            if let image = cameraManager.capturedImage {
+                
+                PostUploadView(
+                    initialImage: cameraManager.capturedOriginalImage,
+                    initialFilter: selectedFilter,
+                    initialIntensity: intensity,
+                    userName: userName,
+                    isFromCamera: true
+                )
             }
         }
     }
@@ -122,7 +140,7 @@ struct CameraScreen: View {
     
     private var previewSection: some View {
         
-        Group {
+        VStack(spacing: 12) {
             
             if let image = cameraManager.capturedImage {
                 
@@ -130,6 +148,19 @@ struct CameraScreen: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: 200)
+                
+                Button {
+                    showPostUpload = true
+                } label: {
+                    Text("投稿")
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 30)
+                        .padding(.vertical, 10)
+                        .background(.blue)
+                        .clipShape(Capsule())
+                        
+                }
             }
         }
     }
