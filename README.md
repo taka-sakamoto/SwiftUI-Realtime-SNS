@@ -100,6 +100,7 @@ A demonstration video will be added in a future update.
 - MTKView
 - AVAssetWriter
 - CoreVideo
+- Kingfisher
 
 ---
 
