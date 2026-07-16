@@ -1,6 +1,6 @@
 # SwiftUI Realtime SNS
 
-<img src="screenshots/SwiftUIRealtimeSNSicom.png" width="250" />
+<img src="screenshots/SwiftUIRealtimeSNSicom.png" width="200" />
 
 ## Overview
 
