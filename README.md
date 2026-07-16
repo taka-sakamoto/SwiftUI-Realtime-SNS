@@ -1,5 +1,7 @@
 # SwiftUI Realtime SNS
 
+<img src="screenshots/SwiftUIRealtimeSNSicom.png" width="250" />
+
 ## Overview
 
 SwiftUI Realtime SNS is an iOS social networking application built with SwiftUI, Metal, and Firebase.
