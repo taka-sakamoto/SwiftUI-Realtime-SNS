@@ -111,23 +111,15 @@ https://github.com/user-attachments/assets/2ebd2a13-9ac1-4022-93e1-f3485ed064e4
 
 ```text
 SwiftUI
-
-├── Feed
-│      │
-│      └── Firebase Firestore
-│
-├── Camera
-│      │
-│      ├── AVFoundation
-│      ├── Metal
-│      ├── Renderer
-│      ├── MetalFilterManager
-│      └── VideoRecorder
-│
-└── Profile
-       │
-       ├── Firebase Auth
-       └── Firestore
+   ↓
+   MVVM
+   ↓
+Firebase
+├── Auth
+├── Firestore
+└── Storage
+   ↓
+Metal
 ```
 
 ---
@@ -190,11 +182,11 @@ posts
   
 ## 🚀 Future Improvements
 
-- User profile editing
-- Like & Comment
-- Follow system
-- More Metal filters
-- Performance optimization
+- Comments
+- Push Notifications
+- Video Feed
+- Search
+- User Follow
 
 ---
 
