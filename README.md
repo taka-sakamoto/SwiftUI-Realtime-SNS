@@ -86,9 +86,8 @@ This project was developed as a portfolio application to showcase practical iOS 
  ---
  
 ## Demo
-A demonstration video will be added in a future update.
 
-(Currently available as a MOV recording in the repository.)
+https://github.com/user-attachments/assets/2ebd2a13-9ac1-4022-93e1-f3485ed064e4
 
 ---
 
