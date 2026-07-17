@@ -10,9 +10,6 @@ import Kingfisher
 
 struct ProfileView: View {
     
-    @AppStorage("userName")
-    var userName = ""
-    
     @StateObject private var viewModel =
     ProfileViewModel()
     
@@ -43,7 +40,7 @@ struct ProfileView: View {
                     )
                     .frame(width: 100, height: 100)
                     
-                    Text(viewModel.user?.displayName ?? userName)
+                    Text(viewModel.user?.displayName ?? "")
                         .font(.title2)
                         .fontWeight(.bold)
                     
@@ -95,15 +92,12 @@ struct ProfileView: View {
             }
             .onAppear {
                 viewModel.fetchMyPosts()
+                print("Profile appear") // デバッグ
                 
-                if viewModel.user == nil {
                     Task {
                         
                         await viewModel.loadUser()
                     }
-                }
-            
-                print("Profile appear") // デバッグ
             }
            
             if let item = selectedImageItem {

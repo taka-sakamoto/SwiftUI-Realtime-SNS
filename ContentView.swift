@@ -17,14 +17,11 @@ struct SelectedImage: Identifiable {
 
 struct ContentView: View {
     @StateObject var viewModel = ImageListViewModel()
+    @StateObject private var profileViewModel = ProfileViewModel()
+    
     @State private var selectedImageItem: SelectedImage? // 拡大表示用
-    
     @State private var selectedPost: Post?
-
     @State private var showUploadView = false
-    
-    @AppStorage("userName")
-    var userName = ""
     
     let columns = [
         GridItem(.flexible()),
@@ -42,12 +39,13 @@ struct ContentView: View {
                 return
             }
             
-            if let uid = Auth.auth().currentUser?.uid {
-                createUserIfNeeded(uid: uid)
+            Task {
+                await profileViewModel.loadOrCreateUser()
             }
         }
     }
     
+    /*
     func createUserIfNeeded(uid: String) {
         let ref = Firestore.firestore().collection("users").document(uid)
         
@@ -66,6 +64,7 @@ struct ContentView: View {
             print("ユーザー作成:", randomName)
         }
     }
+     */
     
     var body: some View {
         ZStack {
@@ -122,11 +121,9 @@ struct ContentView: View {
             }
             .onAppear {
                 
-                if userName.isEmpty {
-                    userName = "User\(Int.random(in: 1000...9999))"
-                }
                 signInAnonymously()
                 viewModel.startListening()
+               
             }
             
             if let item = selectedImageItem {
@@ -148,7 +145,11 @@ struct ContentView: View {
         }
         
         .sheet(isPresented: $showUploadView) {
-            PostUploadView(userName: userName)
+            
+            PostUploadView(
+                userName: profileViewModel.user?.displayName ?? ""
+            )
+            
         }
         
     }

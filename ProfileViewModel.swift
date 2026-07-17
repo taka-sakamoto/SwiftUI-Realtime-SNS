@@ -149,4 +149,41 @@ final class ProfileViewModel: ObservableObject {
             print("Failed to update profile image:", error)
         }
     }
+    
+    @MainActor
+    func loadOrCreateUser() async {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        isLoading = true
+        
+        do {
+            
+            // 既存ユーザー取得
+            user = try await repository.fetchUser(uid: uid)
+            
+        } catch {
+            
+            // 存在しなければ新規作成
+            let newUser = User(
+                id: uid,
+                displayName: "User\(Int.random(in: 1000...9999))",
+                bio: "",
+                profileImageURL: "",
+                createdAt: Date(),
+                updatedAt: Date()
+            )
+            
+            do {
+                try await repository.createUser(newUser)
+                user = newUser
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+        
+        isLoading = false
+    }
 }

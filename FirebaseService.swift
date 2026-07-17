@@ -136,13 +136,15 @@ class FirebaseService {
         postId: String,
         text: String,
         uid: String,
-        userName: String
+        userName: String,
+        profileImageURL: String
     ) {
 
         let data: [String: Any] = [
             "text": text,
             "userId": uid,
             "userName": userName,
+            "profileImageURL": profileImageURL,
             "createdAt": FieldValue.serverTimestamp()
         ]
 
@@ -188,6 +190,7 @@ class FirebaseService {
                         text: data["text"] as? String ?? "",
                         userId: data["userId"] as? String ?? "",
                         userName: data["userName"] as? String ?? "",
+                        profileImageURL: data["profileImageURL"] as? String ?? "",
                         createdAt: date
                     )
                 }

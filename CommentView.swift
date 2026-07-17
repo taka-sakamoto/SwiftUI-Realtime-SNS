@@ -7,17 +7,17 @@
 
 import SwiftUI
 import FirebaseAuth
+import Kingfisher
 
 struct CommentView: View {
     
     let post: Post
     
+    @StateObject private var profileViewModel = ProfileViewModel()
+    
     @State private var comments: [Comment] = []
     
     @State private var text = ""
-    
-    @AppStorage("userName")
-    var userName = ""
     
     @State private var selectedComment: Comment?
     @State private var showDeleteAlert = false
@@ -38,13 +38,29 @@ struct CommentView: View {
                     
                     HStack(alignment: .top, spacing: 12) {
                         
-                        Circle()
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(width: 32, height: 32)
-                            .overlay(
-                                Text(String(comment.userName.prefix(1)))
-                                    .font(.caption)
-                            )
+                        if comment.profileImageURL.isEmpty {
+                            
+                            Image(systemName: "person.circle.fill")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 32, height: 32)
+                                .foregroundStyle(.gray)
+                            
+                        } else {
+                            
+                            KFImage(URL(string: comment.profileImageURL))
+                                .placeholder {
+                                    Image(systemName: "person.circle.fill")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .foregroundStyle(.gray)
+                                }
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 32, height: 32)
+                                .clipShape(Circle())
+                                
+                        }
                         
                         VStack(alignment: .leading, spacing: 4) {
                             
@@ -93,17 +109,19 @@ struct CommentView: View {
 
                     Button("送信") {
                         
-                        print("comment userName:", userName)
+                        //print("comment userName:", userName)
 
-                        guard let uid =
-                        Auth.auth().currentUser?.uid
-                        else { return }
+                        guard let user = profileViewModel.user else {
+                            return
+                        }
 
                         FirebaseService.shared.addComment(
                             postId: post.id,
                             text: text,
-                            uid: uid,
-                            userName: userName
+                            uid: user.id,
+                            userName: user.displayName,
+                            profileImageURL: user.profileImageURL
+                            
                         )
 
                         text = ""
@@ -141,6 +159,10 @@ struct CommentView: View {
             }
 
             Button("キャンセル", role: .cancel) {}
+        }
+        
+        .task {
+            await profileViewModel.loadOrCreateUser()
         }
         
         

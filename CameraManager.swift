@@ -12,7 +12,9 @@ import UIKit
 
 final class CameraManager: NSObject, ObservableObject {
     
+    // 撮影した元画像（フィルター未適用）
     @Published var capturedOriginalImage: UIImage?
+    // プレビュー表示用のフィルター適用済み画像
     @Published var capturedImage: UIImage?
     @Published var isRecording = false
     @Published var didSavedVideo = false

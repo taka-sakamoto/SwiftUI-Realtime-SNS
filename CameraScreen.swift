@@ -9,10 +9,8 @@ import SwiftUI
 
 struct CameraScreen: View {
     
-    @AppStorage("userName")
-    private var userName = ""
-    
     @StateObject private var cameraManager = CameraManager()
+    @StateObject private var profileViewModel = ProfileViewModel()
     
     @State private var selectedFilter: FilterType = .mono
     
@@ -62,16 +60,19 @@ struct CameraScreen: View {
         }
         .sheet(isPresented: $showPostUpload) {
             
-            if let image = cameraManager.capturedImage {
+            if let originalImage = cameraManager.capturedOriginalImage {
                 
                 PostUploadView(
                     initialImage: cameraManager.capturedOriginalImage,
                     initialFilter: selectedFilter,
                     initialIntensity: intensity,
-                    userName: userName,
+                    userName: profileViewModel.user?.displayName ?? "",
                     isFromCamera: true
                 )
             }
+        }
+        .task {
+            await profileViewModel.loadOrCreateUser()
         }
     }
     
