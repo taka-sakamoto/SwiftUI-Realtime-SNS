@@ -14,6 +14,8 @@ struct Post: Identifiable {
     let userName: String
     let imagePath: String
     
+    let caption: String
+    
     let filterName: String?
     
     let createdAt: Date

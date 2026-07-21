@@ -73,6 +73,14 @@ struct PostRow: View {
                 }
             }
             
+            if !post.caption.isEmpty {
+                Text(post.caption)
+                    .font(.body)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 4)
+            }
+            
             HStack {
                 Button {
                     onLike()

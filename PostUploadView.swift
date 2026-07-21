@@ -21,6 +21,12 @@ struct PostUploadView: View {
     
     @State private var intensity: Float
     
+    @State private var caption = ""
+    
+    @State private var previewImage: UIImage?
+    
+    @State private var thumbnails: [FilterType: UIImage] = [:]
+    
     let userName: String
     
     let isFromCamera: Bool
@@ -52,123 +58,165 @@ struct PostUploadView: View {
         
         NavigationStack {
             
-            VStack(spacing: 20) {
+            ScrollView {
                 
-                if let image = pickedImage {
+                VStack(spacing: 20) {
                     
-                    let previewImage =
+                    if let image = pickedImage {
+                        
+                        /*
+                        let previewImage =
                         ImageFilterManager.shared.applyFilter(
                             to: image,
                             filter: selectedFilter,
                             intensity: intensity
                         )
-                    
-                    Image(uiImage: previewImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 300)
-              
-                
-                    ScrollView(.horizontal, showsIndicators: false) {
-                    
-                        HStack(spacing: 16) {
+                         */
                         
-                            ForEach(FilterType.allCases, id: \.self) { filter in
+                        if let previewImage {
+                            
+                            Image(uiImage: previewImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 300)
+                        }
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            
+                            HStack(spacing: 16) {
                                 
-                                let previewImage =
-                                ImageFilterManager.shared.applyFilter(
-                                    to: image,
-                                    filter: filter,
-                                    intensity: 1.0
-                                )
-                                
-                                VStack(spacing: 8) {
-                                    
-                                    Image(uiImage: previewImage)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 80, height: 80)
-                                        .clipped()
-                                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                                        .overlay {
+                                ForEach(FilterType.allCases, id: \.self) { filter in
+                                    VStack(spacing: 8) {
+                                        if let thumbnail = thumbnails[filter] {
                                             
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .stroke(
-                                                    selectedFilter == filter
-                                                    ? Color.blue
-                                                    : Color.clear,
-                                                    lineWidth: 3
-                                                )
+                                            Image(uiImage: thumbnail)
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 80, height: 80)
+                                                .clipped()
+                                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                                .overlay {
+                                                    
+                                                    RoundedRectangle(cornerRadius: 12)
+                                                        .stroke(
+                                                            selectedFilter == filter
+                                                            ? Color.blue
+                                                            : Color.clear,
+                                                            lineWidth: 3
+                                                        )
+                                                }
                                         }
-                                    
-                                    Text(filter.rawValue.capitalized)
-                                        .font(.caption)
-                                }
-                                .onTapGesture {
-                                    selectedFilter = filter
+                                        
+                                        
+                                        Text(filter.rawValue.capitalized)
+                                            .font(.caption)
+                                    }
+                                    .onTapGesture {
+                                        selectedFilter = filter
+                                    }
                                 }
                             }
                         }
+                        .padding(.horizontal)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 8) {
+                        
+                        Text("Caption")
+                            .font(.headline)
+                        
+                        ZStack(alignment: .topLeading) {
+                            
+                            if caption.isEmpty {
+                                Text("Write a caption...")
+                                    .foregroundColor(.secondary)
+                                    .padding(.top, 16)
+                                    .padding(.leading, 10)
+                            }
+                            
+                            TextEditor(text: $caption)
+                                .frame(height: 100)
+                                .padding(4)
+                        }
                     }
                     .padding(.horizontal)
-                }
-                
-                if !isFromCamera {
-                    Button("画像を選択") {
-                        showPicker = true
+                    
+                    
+                    if !isFromCamera {
+                        Button("画像を選択") {
+                            showPicker = true
+                        }
                     }
-                }
-                
-                Button("投稿") {
                     
-                    guard let image = pickedImage else { return }
-                    
-                    guard let uid = Auth.auth().currentUser?.uid else { return }
-                    
-                    let filteredImage =
+                    Button("投稿") {
+                        
+                        guard let image = pickedImage else { return }
+                        
+                        guard let uid = Auth.auth().currentUser?.uid else { return }
+                        
+                        let filteredImage =
                         ImageFilterManager.shared.applyFilter(
                             to: image,
                             filter: selectedFilter,
                             intensity: intensity
                         )
-                    
-                    let resizedImage = filteredImage.resized(toWidth: 720)
-                    
-                    guard let data =
-                            resizedImage.jpegData(compressionQuality: 0.6)
-                    else {
-                        return
+                        
+                        let resizedImage = filteredImage.resized(toWidth: 720)
+                        
+                        guard let data =
+                                resizedImage.jpegData(compressionQuality: 0.6)
+                        else {
+                            return
+                        }
+                        
+                        print(  // デバッグ
+                            "Upload image size:",
+                            data.count / 1024,
+                            "KB"
+                        )  // ここまで
+                        
+                        uploadImage(
+                            data: data,
+                            uid: uid,
+                            name: userName,
+                            caption: caption
+                        )
+                        
+                        dismiss()
                     }
+                    .disabled(pickedImage == nil)
                     
-                    print(  // デバッグ
-                        "Upload image size:",
-                        data.count / 1024,
-                        "KB"
-                    )  // ここまで
-
-                    uploadImage(
-                        data: data,
-                        uid: uid,
-                        name: userName
-                    )
-                    
-                    dismiss()
+                    Spacer(minLength: 20)
                 }
-                .disabled(pickedImage == nil)
-                
-                Spacer()
+                .padding(.vertical)
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("New Post")
             .sheet(isPresented: $showPicker) {
                 ImagePicker(image: $pickedImage)
             }
+        }
+        .onAppear {
+            updatePreview()
+            generateThumbnails()
+        }
+        .onChange(of: pickedImage) { _ in
+            updatePreview()
+            generateThumbnails()
+        }
+        .onChange(of: selectedFilter) { _ in
+            updatePreview()
+        }
+        .onChange(of: intensity) { _ in
+            updatePreview()
         }
     }
         
     func uploadImage(
         data: Data,
         uid: String,
-        name: String
+        name: String,
+        caption: String
     ) {
         
         let storageRef = Storage.storage()
@@ -200,6 +248,7 @@ struct PostUploadView: View {
                         "imageUrl": imageUrl,
                         "userId": uid,
                         "userName": name,
+                        "caption": caption,
                         "filterName": selectedFilter.rawValue,
                         "createdAt": Timestamp(),
                         "likeCount": 0,
@@ -210,6 +259,42 @@ struct PostUploadView: View {
                 
             }
         }
+    }
+    
+    private func updatePreview() {
+        
+        guard let image = pickedImage else {
+            previewImage = nil
+            return
+        }
+        
+        previewImage = ImageFilterManager.shared.applyFilter(
+            to: image,
+            filter: selectedFilter,
+            intensity: intensity
+        )
+    }
+    
+    private func generateThumbnails() {
+        
+        guard let image = pickedImage else {
+            thumbnails.removeAll()
+            return
+        }
+        
+        var cache: [FilterType: UIImage] = [:]
+        
+        for filter in FilterType.allCases {
+            
+            cache[filter] =
+            ImageFilterManager.shared.applyFilter(
+                to: image,
+                filter: filter,
+                intensity: 1.0
+            )
+        }
+        
+        thumbnails = cache
     }
     
 }

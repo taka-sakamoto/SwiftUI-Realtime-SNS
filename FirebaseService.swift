@@ -87,6 +87,7 @@ class FirebaseService {
                         userId: data["userId"] as? String ?? "",
                         userName: data["userName"] as? String ?? "Unknown",
                         imagePath: data["imagePath"] as? String ?? "",
+                        caption: data["caption"] as? String ?? "",
                         filterName: data["filterName"] as? String,
                         createdAt: Date(),
                         likedBy: data["likedBy"] as? [String] ?? [],

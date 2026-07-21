@@ -89,6 +89,7 @@ class ImageListViewModel: ObservableObject {
                         userId: data["userId"] as? String ?? "",
                         userName: data["userName"] as? String ?? "Unknown",
                         imagePath: data["imagePath"] as? String ?? "",
+                        caption: data["caption"] as? String ?? "",
                         filterName: data["filterName"] as? String,
                         createdAt: timestamp.dateValue(),
                         likedBy: data["likedBy"] as? [String] ?? [],
