@@ -187,4 +187,14 @@ final class ProfileViewModel: ObservableObject {
         
         isLoading = false
     }
+    
+    @MainActor
+    func fetchUser(uid: String) async {
+        
+        do {
+            user = try await repository.fetchUser(uid: uid)
+        } catch {
+            print("Failed to fetch user: \(error.localizedDescription)")
+        }
+    }
 }

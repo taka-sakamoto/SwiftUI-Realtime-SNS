@@ -26,12 +26,6 @@ struct PostRow: View {
     @State private var animateLike = false
     @State private var showBigHeart = false
     
-    func relativeDate(_ date: Date) -> String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .short
-        return formatter.localizedString(for: date, relativeTo: Date())
-    }
-    
     var body: some View {
         
         let isLiked = post.likedBy.contains(Auth.auth().currentUser?.uid ?? "")
@@ -50,7 +44,7 @@ struct PostRow: View {
                     Text(user?.displayName ?? post.userName)
                         .font(.headline)
                     
-                    Text(relativeDate(post.createdAt))
+                    Text(post.createdAt.relativeString())
                         .font(.caption)
                         .foregroundColor(.gray)
                 }

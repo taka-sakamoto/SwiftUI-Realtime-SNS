@@ -21,10 +21,9 @@ struct ProfileView: View {
     
     let namespace: Namespace.ID
     
-    @State private var selectedImageItem:
-    SelectedImage?
-    
     @State private var showingEditProfile = false
+    
+    @State private var selectedDetailPost: Post?
     
     var body: some View {
         
@@ -100,11 +99,10 @@ struct ProfileView: View {
                     }
             }
            
-            if let item = selectedImageItem {
+            if let post = selectedDetailPost {
                 
-                FullScreenImageView(
-                    imageUrl: item.url,
-                    postId: item.id,
+                PostDetailView(
+                    post: post,
                     namespace: namespace,
                     onClose: {
                         
@@ -112,7 +110,7 @@ struct ProfileView: View {
                             response: 0.45,
                             dampingFraction: 0.82
                         )) {
-                            selectedImageItem = nil
+                            selectedDetailPost = nil
                         }
                     }
                 )

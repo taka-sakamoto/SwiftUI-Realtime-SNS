@@ -64,15 +64,6 @@ struct PostUploadView: View {
                     
                     if let image = pickedImage {
                         
-                        /*
-                        let previewImage =
-                        ImageFilterManager.shared.applyFilter(
-                            to: image,
-                            filter: selectedFilter,
-                            intensity: intensity
-                        )
-                         */
-                        
                         if let previewImage {
                             
                             Image(uiImage: previewImage)

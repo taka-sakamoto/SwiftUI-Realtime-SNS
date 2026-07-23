@@ -22,12 +22,6 @@ struct CommentView: View {
     @State private var selectedComment: Comment?
     @State private var showDeleteAlert = false
     
-    func relativeDate(_ date: Date) -> String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .short
-        return formatter.localizedString(for: date, relativeTo: Date())
-    }
-    
     var body: some View {
 
         NavigationView {
@@ -69,7 +63,7 @@ struct CommentView: View {
                                 Text(comment.userName)
                                     .font(.headline)
                                 
-                                Text(relativeDate(comment.createdAt))
+                                Text(comment.createdAt.relativeString())
                                     .font(.caption)
                                     .foregroundColor(.gray)
                                 

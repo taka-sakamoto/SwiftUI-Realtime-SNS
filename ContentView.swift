@@ -19,8 +19,8 @@ struct ContentView: View {
     @StateObject var viewModel = ImageListViewModel()
     @StateObject private var profileViewModel = ProfileViewModel()
     
-    @State private var selectedImageItem: SelectedImage? // 拡大表示用
-    @State private var selectedPost: Post?
+    @State private var selectedDetailPost: Post? // 拡大表示用
+    @State private var selectedCommentPost: Post?
     @State private var showUploadView = false
     
     let columns = [
@@ -44,27 +44,6 @@ struct ContentView: View {
             }
         }
     }
-    
-    /*
-    func createUserIfNeeded(uid: String) {
-        let ref = Firestore.firestore().collection("users").document(uid)
-        
-        ref.getDocument { snapshot, _ in
-            if snapshot?.exists == true {
-                return // すでに存在
-            }
-            
-            let randomName = "User\(Int.random(in: 1000...9999))"
-            
-            ref.setData([
-                "name": randomName,
-                "createdAt": FieldValue.serverTimestamp()
-            ])
-            
-            print("ユーザー作成:", randomName)
-        }
-    }
-     */
     
     var body: some View {
         ZStack {
@@ -94,21 +73,17 @@ struct ContentView: View {
                                     onTap: {
                                         withAnimation(.spring(response: 0.4,
                                                               dampingFraction: 0.85)) {
-                                            selectedImageItem =
-                                            SelectedImage(
-                                                id: post.id,
-                                                url: post.imageUrl
-                                            )
+                                           selectedDetailPost = post
                                         }
                                     },
                                     onLike: {
                                         viewModel.toggleLike(post: post)
                                     },
                                     onComment: {
-                                        selectedPost = post
+                                        selectedCommentPost = post
                                     },
                                     namespace: namespace,
-                                    isSource: selectedImageItem == nil
+                                    isSource: selectedDetailPost == nil
                                 )
                             }
                         }
@@ -126,21 +101,20 @@ struct ContentView: View {
                
             }
             
-            if let item = selectedImageItem {
+            if let post = selectedDetailPost {
                 
-                FullScreenImageView(
-                    imageUrl: item.url,
-                    postId: item.id,
+                PostDetailView(
+                    post: post,
                     namespace: namespace,
                     onClose: {
-                    selectedImageItem = nil
+                    selectedDetailPost = nil
                     }
                 )
                 .zIndex(1)
             }
             
         }
-        .sheet(item: $selectedPost) { post in
+        .sheet(item: $selectedCommentPost) { post in
             CommentView(post: post)
         }
         
