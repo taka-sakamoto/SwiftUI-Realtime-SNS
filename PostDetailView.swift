@@ -31,69 +31,23 @@ struct PostDetailView: View {
                 
                 VStack(alignment: .leading, spacing: 16) {
                     
-                    // Header
-                    HStack(spacing: 8) {
-                        
-                        ProfileImageView(
-                            imageURL: profileViewModel.user?.profileImageURL,
-                            selectedImage: nil,
-                            displayName: profileViewModel.user?.displayName ?? post.userName
-                        )
-                        .frame(width: 36, height: 36)
-                        
-                        VStack(alignment: .leading, spacing: 2) {
-                            
-                            Text(profileViewModel.user?.displayName ?? post.userName)
-                                .font(.headline)
-                                .foregroundStyle(.white)
-                            
-                            Text(post.createdAt.relativeString())
-                                .font(.caption)
-                                .foregroundStyle(.gray)
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding(.horizontal)
+                    headerSection
                     
-                    // image
-                    HStack {
-                        
-                        Spacer()
-                        
-                        KFImage(URL(string: post.imageUrl))
-                            .resizable()
-                            .scaledToFit()
-                            .frame(
-                                maxWidth: 350,
-                                maxHeight: 600
-                            )
-                        
-                            .matchedGeometryEffect(
-                                id: post.id,
-                                in: namespace,
-                                isSource: false
-                            )
-                        // .zIndex(1)
-                        
-                        Spacer()
-                        
-                    }
+                    imageSection
+
+                    actionBarSection
                     
-                    if !post.caption.isEmpty {
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            
-                            Text(profileViewModel.user?.displayName ?? post.userName)
-                                .font(.headline)
-                            
-                            Text(post.caption)
-                                .foregroundStyle(.white)
-                            
-                            
-                        }
-                        .padding(.horizontal)
-                    }
+                    captionSection
+                    
+                    Divider()
+                    
+                    commentsSection
+                    
+                    Divider()
+                    
+                    commentInputSection
+                    
+                    
                 }
                 .padding(.vertical)
                 
@@ -133,6 +87,86 @@ struct PostDetailView: View {
                     }
                 }
         )
+    }
+    
+    private var headerSection: some View {
+        
+        HStack(spacing: 8) {
+            
+            ProfileImageView(
+                imageURL: profileViewModel.user?.profileImageURL,
+                selectedImage: nil,
+                displayName: profileViewModel.user?.displayName ?? post.userName
+            )
+            .frame(width: 36, height: 36)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                
+                Text(profileViewModel.user?.displayName ?? post.userName)
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                
+                Text(post.createdAt.relativeString())
+                    .font(.caption)
+                    .foregroundStyle(.gray)
+            }
+            
+            Spacer()
+        }
+        .padding(.horizontal)
+    }
+    
+    private var imageSection: some View {
+        
+        HStack {
+            
+            Spacer()
+            
+            KFImage(URL(string: post.imageUrl))
+                .resizable()
+                .scaledToFit()
+                .frame(
+                    maxWidth: 350,
+                    maxHeight: 600
+                )
+            
+                .matchedGeometryEffect(
+                    id: post.id,
+                    in: namespace,
+                    isSource: false
+                )
+            // .zIndex(1)
+            
+            Spacer()
+        }
+    }
+    
+    private var captionSection: some View {
+        
+        Group {
+            
+            if !post.caption.isEmpty {
+                
+                Text(post.caption)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal)
+            }
+        }
+    }
+    
+    private var actionBarSection: some View {
+        
+        EmptyView()
+    }
+    
+    private var commentsSection: some View {
+        
+        EmptyView()
+    }
+    
+    private var commentInputSection: some View {
+        
+        EmptyView()
     }
 }
 
