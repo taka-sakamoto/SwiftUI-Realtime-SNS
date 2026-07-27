@@ -126,6 +126,25 @@ struct PostDetailView: View {
                     }
                 }
         )
+        
+        .alert("コメントを削除しますか？",
+               isPresented: $showDeleteAlert) {
+            
+            Button("削除", role: .destructive) {
+                
+                guard let comment = selectedComment else {
+                    return
+                }
+                
+                FirebaseService.shared.deleteComment(
+                    postId: post.id,
+                    commentId: comment.id
+                )
+                
+            }
+            
+            Button("キャンセル", role: .cancel) { }
+        }
     }
     
     private var headerSection: some View {
@@ -240,7 +259,14 @@ struct PostDetailView: View {
         
         ForEach(comments) { comment in
 
-            CommentRow(comment: comment)
+            CommentRow(
+                comment: comment,
+                canDelete: comment.userId == profileViewModel.user?.id,
+                onDelete: {
+                    selectedComment = comment
+                    showDeleteAlert = true
+                }
+            )
         }
         .foregroundStyle(.white)
     }

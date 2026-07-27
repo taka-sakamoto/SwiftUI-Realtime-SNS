@@ -30,7 +30,14 @@ struct CommentView: View {
 
                 List(comments) { comment in
                     
-                    CommentRow(comment: comment)
+                    CommentRow(
+                        comment: comment,
+                        canDelete: comment.userId == profileViewModel.user?.id,
+                        onDelete: {
+                            selectedComment = comment
+                            showDeleteAlert = true
+                        }
+                    )
                 }
                     
 

@@ -14,6 +14,8 @@ struct CommentRow: View {
     // MARK: - Properties
     
     let comment: Comment
+    let canDelete: Bool
+    let onDelete: () -> Void
     
     // MARK: - Body
     
@@ -73,6 +75,10 @@ struct CommentRow: View {
             Text(comment.createdAt.formatted(date: .abbreviated, time: .shortened))
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            
+            if canDelete {
+                menuButton
+            }
         }
     }
     
@@ -81,6 +87,24 @@ struct CommentRow: View {
         Text(comment.text)
             .font(.body)
             .foregroundStyle(.primary)
+    }
+    
+    private var menuButton: some View {
+        
+        Menu {
+            
+            Button(role: .destructive) {
+                onDelete()
+            } label: {
+                Label("削除", systemImage: "trash")
+            }
+            
+        } label: {
+            
+            Image(systemName: "ellipsis.circle.fill")
+                .foregroundStyle(.secondary)
+                .padding(.leading, 4)
+        }
     }
     
     // MARK: - Computed Properties
