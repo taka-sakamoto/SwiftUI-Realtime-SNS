@@ -108,7 +108,8 @@ struct ContentView: View {
                     namespace: namespace,
                     onClose: {
                     selectedDetailPost = nil
-                    }
+                    },
+                    viewModel: viewModel
                 )
                 .zIndex(1)
             }

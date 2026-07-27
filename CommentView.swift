@@ -30,68 +30,9 @@ struct CommentView: View {
 
                 List(comments) { comment in
                     
-                    HStack(alignment: .top, spacing: 12) {
-                        
-                        if comment.profileImageURL.isEmpty {
-                            
-                            Image(systemName: "person.circle.fill")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 32, height: 32)
-                                .foregroundStyle(.gray)
-                            
-                        } else {
-                            
-                            KFImage(URL(string: comment.profileImageURL))
-                                .placeholder {
-                                    Image(systemName: "person.circle.fill")
-                                        .resizable()
-                                        .scaledToFill()
-                                        .foregroundStyle(.gray)
-                                }
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 32, height: 32)
-                                .clipShape(Circle())
-                                
-                        }
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            
-                            HStack {
-                                
-                                Text(comment.userName)
-                                    .font(.headline)
-                                
-                                Text(comment.createdAt.relativeString())
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                                
-                                Spacer()
-                                
-                                if comment.userId ==
-                                    Auth.auth().currentUser?.uid {
-                                    
-                                    Button(role: .destructive) {
-                                        
-                                        selectedComment = comment
-                                        showDeleteAlert = true
-                                        
-                                    } label: {
-                                        
-                                        Image(systemName: "trash")
-                                            .font(.caption)
-                                    }
-                                }
-                            }
-                            
-                            Text(comment.text)
-                        }
-                        
-                        Spacer()
-                    }
-                    .padding(.vertical, 4)
+                    CommentRow(comment: comment)
                 }
+                    
 
                 HStack {
 
@@ -158,7 +99,6 @@ struct CommentView: View {
         .task {
             await profileViewModel.loadOrCreateUser()
         }
-        
         
     }
 }

@@ -25,6 +25,8 @@ struct ProfileView: View {
     
     @State private var selectedDetailPost: Post?
     
+    @StateObject private var imageListViewModel = ImageListViewModel()
+    
     var body: some View {
         
         ZStack {
@@ -112,7 +114,8 @@ struct ProfileView: View {
                         )) {
                             selectedDetailPost = nil
                         }
-                    }
+                    },
+                    viewModel: imageListViewModel
                 )
                 
                 .zIndex(1)
