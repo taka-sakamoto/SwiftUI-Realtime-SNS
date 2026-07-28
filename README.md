@@ -98,11 +98,11 @@ PostDetailView
 |---|---|---|
 |<img src="screenshots/feed.png" width="250" />|<img src="screenshots/camera.png" width="250" />|<img src="screenshots/filter.png" width="250" />|
 
-|Filter|New Post|
+|New Post|Profile|
 |---|---|
 |<img src="screenshots/newpost.png" width="250" />|<img src="screenshots/profile.png" width="250" />|
 
-|Profile|Image Viewer|
+|Post Detail|Comment Menu|
 |---|---|
 |<img src="screenshots/postdetail.png" width="250" />|<img src="screenshots/commentmenu.png" width="250" />|
 
