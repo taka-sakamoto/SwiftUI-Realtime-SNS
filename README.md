@@ -94,17 +94,17 @@ PostDetailView
 ---
 
 ## Screenshots
-|Feed|Camera|
-|---|---|
-|<img src="screenshots/feed.png" width="250" />|<img src="screenshots/camera.png" width="250" />|
+|Feed|Camera|Filter|
+|---|---|---|
+|<img src="screenshots/feed.png" width="250" />|<img src="screenshots/camera.png" width="250" />|<img src="screenshots/filter.png" width="250" />|
 
 |Filter|New Post|
 |---|---|
-|<img src="screenshots/metalfilter.png" width="250" />|<img src="screenshots/newpost.png" width="250" />|
+|<img src="screenshots/newpost.png" width="250" />|<img src="screenshots/profile.png" width="250" />|
 
 |Profile|Image Viewer|
 |---|---|
-|<img src="screenshots/profile.png" width="250" />|<img src="screenshots/fullscreen.png" width="250" />|
+|<img src="screenshots/postdetail.png" width="250" />|<img src="screenshots/commentmenu.png" width="250" />|
 
  ---
  
