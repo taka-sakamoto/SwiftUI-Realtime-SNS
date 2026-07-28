@@ -8,7 +8,9 @@
 
 SwiftUI Realtime SNS is an iOS social networking application built with SwiftUI, Metal, and Firebase.
 
-The app features real-time Metal camera filters, photo and video capture, and seamless integration with Firebase Authentication, Cloud Firestore, and Firebase Storage. Users can capture photos with live filters, adjust filters before posting, upload images to the cloud, and interact with posts through likes and profile management.
+The app features real-time Metal camera filters, photo and video capture, and seamless integration with Firebase Authentication, Cloud Firestore, and Firebase Storage. Users can capture photos with live Metal filters, adjust filters before posting, upload images to Firebase, and interact with posts through likes, comments, and customizable user profiles.
+
+The application features a reusable SwiftUI component architecture, real-time Firestore updates, and efficient image loading using Kingfisher.
 
 The project follows the MVVM architecture and demonstrates modern iOS development using Swift Concurrency (async/await), Firebase services, Metal image processing, and efficient image loading with Kingfisher.
 
@@ -26,6 +28,9 @@ This project was developed as a portfolio application to showcase practical iOS 
 - View posts in real time using Cloud Firestore
 - Like posts
 - Double-tap to like
+- Real-time comments  
+- Create and delete comments  
+- Reusable CommentRow component  
 - Full-screen image viewer
 - Pinch-to-zoom image support
 - Optimized image loading with Kingfisher
@@ -55,6 +60,7 @@ This project was developed as a portfolio application to showcase practical iOS 
 - Edit display name and bio
 - Upload and update profile images
 - View your own posts
+- Real-time profile updates
 - Cached profile images with Kingfisher
 
 ### Architecture
@@ -67,6 +73,23 @@ This project was developed as a portfolio application to showcase practical iOS 
 - Metal
 - AVFoundation
 - Kingfisher
+- Reusable SwiftUI Components
+- Section-based View Composition
+
+---
+
+## UI Architecture
+
+```
+PostDetailView
+├── Header
+├── Image
+├── Action Bar
+├── Caption
+├── Comments
+│   └── CommentRow
+└── Comment Input
+```
 
 ---
 
@@ -177,16 +200,17 @@ posts
                 ├── text
                 ├── userId
                 ├── userName
+                ├── profileImageURL
                 └── createdAt
 ```
   
 ## 🚀 Future Improvements
 
-- Comments
 - Push Notifications
 - Video Feed
 - Search
 - User Follow
+- Comment editing
 
 ---
 
