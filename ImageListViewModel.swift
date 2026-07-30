@@ -22,6 +22,8 @@ class ImageListViewModel: ObservableObject {
     
     @Published var savedPostIDs: Set<String> = []
     
+    @Published var savedPosts: [Post] = []
+    
     private var isLoading = false
     
     private var listener: ListenerRegistration?
@@ -39,6 +41,10 @@ class ImageListViewModel: ObservableObject {
         Task {
             
             await fetchSavedPostIDs()
+            
+            await MainActor.run {
+                self.updateSavedPosts()
+            }
         }
     }
     
@@ -65,7 +71,6 @@ class ImageListViewModel: ObservableObject {
     
     
     func listenUser(uid: String) {
-        
 
         guard userListeners[uid] == nil else {
             return
@@ -116,10 +121,15 @@ class ImageListViewModel: ObservableObject {
                 }
                 .sorted { $0.createdAt > $1.createdAt }
                 
+                self.updateSavedPosts()
+                
                 for post in self.posts {
                     self.listenUser(uid: post.userId)
+                    
                 }
+                
             }
+        
     }
     
 
@@ -162,11 +172,14 @@ class ImageListViewModel: ObservableObject {
         do {
 
             savedPostIDs = try await FirebaseService.shared.fetchSavedPostIDs()
+            
+            updateSavedPosts()
 
         } catch {
             
             print("Faild to fetch saved posts:", error)
         }
+        
     }
     
     @MainActor
@@ -193,13 +206,26 @@ class ImageListViewModel: ObservableObject {
                 
             }
             
+            updateSavedPosts()
+            
         } catch {
             
             print("Failed to toggle save:", error)
         }
+    }
+    
+    
+    // MARK: - Private Methods
+    
+    private func updateSavedPosts() {
         
+        savedPosts = posts.filter { post in
+            
+            savedPostIDs.contains(post.id)
+        }
         
     }
+    
     
 }
 

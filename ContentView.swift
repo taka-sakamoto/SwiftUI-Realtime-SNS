@@ -16,7 +16,8 @@ struct SelectedImage: Identifiable {
 }
 
 struct ContentView: View {
-    @StateObject var viewModel = ImageListViewModel()
+    // @StateObject var viewModel = ImageListViewModel()
+    @ObservedObject var viewModel: ImageListViewModel
     @StateObject private var profileViewModel = ProfileViewModel()
     
     @State private var selectedDetailPost: Post? // 拡大表示用

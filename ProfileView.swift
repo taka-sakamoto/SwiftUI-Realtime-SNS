@@ -10,22 +10,28 @@ import Kingfisher
 
 struct ProfileView: View {
     
+    // MARK: - Dependencies
+    
     @StateObject private var viewModel =
     ProfileViewModel()
+    
+    @ObservedObject var imageListViewModel: ImageListViewModel
+    
+    let namespace: Namespace.ID
+    
+    // MARK: - State
+    
+    @State private var showingEditProfile = false
+    
+    @State private var selectedDetailPost: Post?
+    
+    @State private var selectedTab = 0
     
     private let columns = [
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
-    
-    let namespace: Namespace.ID
-    
-    @State private var showingEditProfile = false
-    
-    @State private var selectedDetailPost: Post?
-    
-    @StateObject private var imageListViewModel = ImageListViewModel()
     
     var body: some View {
         
@@ -68,24 +74,41 @@ struct ProfileView: View {
                     }
                     .padding(.horizontal)
                     
-                    LazyVGrid(columns: columns, spacing: 2) {
+                    Picker("", selection: $selectedTab) {
                         
-                        ForEach(viewModel.posts, id: \.id) { post in
+                        Text("Posts")
+                            .tag(0)
+                        
+                        Text("Saved")
+                            .tag(1)
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal)
+                    
+                    if selectedTab == 0 {
+                        
+                        LazyVGrid(columns: columns, spacing: 2) {
                             
-                            KFImage(URL(string: post.imageUrl))
-                                .resizable()
-                                .placeholder {
-                                    ProgressView()
-                                        .frame(width: 120, height: 120)
-                                }
-                                .scaledToFill()
-                                .frame(width: 120, height: 120)
-                                .clipped()
-                                .id(post.id)
-                       
-                            
+                            ForEach(viewModel.posts, id: \.id) { post in
+                                
+                                KFImage(URL(string: post.imageUrl))
+                                    .resizable()
+                                    .placeholder {
+                                        ProgressView()
+                                            .frame(width: 120, height: 120)
+                                    }
+                                    .scaledToFill()
+                                    .frame(width: 120, height: 120)
+                                    .clipped()
+                                    .id(post.id)
+                            }
                         }
+                    } else {
                         
+                        SavedPostsView(
+                            viewModel: imageListViewModel
+                            
+                        )
                     }
                 }
                 
@@ -93,8 +116,7 @@ struct ProfileView: View {
             }
             .onAppear {
                 viewModel.fetchMyPosts()
-                print("Profile appear") // デバッグ
-                
+               
                     Task {
                         
                         await viewModel.loadUser()

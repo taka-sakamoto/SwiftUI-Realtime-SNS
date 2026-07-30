@@ -12,6 +12,8 @@ import FirebaseCore
 struct MetalFirebaseAppApp: App {
     
     @Namespace private var animation
+    
+    @StateObject private var imageListViewModel = ImageListViewModel()
 
     init() {
         FirebaseApp.configure()
@@ -23,6 +25,7 @@ struct MetalFirebaseAppApp: App {
             TabView {
                 
                 ContentView(
+                    viewModel: imageListViewModel,
                     namespace: animation
                 )
                 .tabItem {
@@ -36,7 +39,10 @@ struct MetalFirebaseAppApp: App {
                         systemImage: "camera")
                     }
                 
-                ProfileView(namespace: animation)
+                ProfileView(
+                    imageListViewModel: imageListViewModel,
+                    namespace: animation
+                )
                     .tabItem {
                         Label("Profile",
                               systemImage: "person")
