@@ -133,4 +133,57 @@ final class UserRepository {
                 
             }
     }
+    
+    // MARK: - Create
+    
+    func savePost(
+        uid: String,
+        postId: String
+    ) async throws {
+        
+        try await db
+            .collection("users")
+            .document(uid)
+            .collection("savedPosts")
+            .document(postId)
+            .setData([
+                "postId": postId,
+                "savedAt": Timestamp()
+            ])
+    }
+    
+    // MARK: - Delete
+    
+    func unsavePost(
+        uid: String,
+        postId: String
+    ) async throws {
+        
+        try await db
+            .collection("users")
+            .document(uid)
+            .collection("savedPosts")
+            .document(postId)
+            .delete()
+    }
+    
+    // MARK: - Read
+    
+    func fetchSavedPostIDs(
+        uid: String
+    ) async throws -> Set<String> {
+        
+        let snapshot = try await db
+            .collection("users")
+            .document(uid)
+            .collection("savedPosts")
+            .getDocuments()
+        
+        return Set(
+            snapshot.documents.compactMap {
+                $0.documentID
+            }
+        )
+    }
+
 }

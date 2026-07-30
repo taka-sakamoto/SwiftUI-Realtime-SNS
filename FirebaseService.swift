@@ -19,6 +19,8 @@ class FirebaseService {
         private let db = Firestore.firestore()
         private let storage = Storage.storage()
     
+    private let userRepository = UserRepository()
+    
     func createPost(imageUrl: String, userId: String) {
         let data: [String: Any] = [
             "imageUrl": imageUrl,
@@ -216,6 +218,61 @@ class FirebaseService {
             .updateData([
                 "commentCount": FieldValue.increment(Int64(-1))
             ])
+    }
+    
+    func savePost(postId: String) async throws {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+           
+            return
+        }
+  
+        try await userRepository.savePost(
+            uid: uid,
+            postId: postId
+        )
+        
+    }
+    
+    func unsavePost(postId: String) async throws {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        try await userRepository.unsavePost(
+            uid: uid,
+            postId: postId
+        )
+    }
+    
+    func fetchSavedPostIDs() async throws -> Set<String> {
+        
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return []
+        }
+        
+        return try await userRepository.fetchSavedPostIDs(
+            uid: uid
+        )
+    }
+    
+    func toggleSave(
+        postId: String,
+        isSaved: Bool
+    ) async throws {
+        
+        if isSaved {
+            
+            try await unsavePost(
+                postId: postId
+            )
+        } else {
+            
+            try await savePost(
+                postId: postId
+            )
+        }
     }
     
 }

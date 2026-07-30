@@ -13,18 +13,36 @@ import FirebaseFirestore
 import FirebaseAuth
 
 class ImageListViewModel: ObservableObject {
+    
+    // MARK: - Published Properties
+    
     @Published var posts: [Post] = []
     
     @Published var users: [String: User] = [:]
+    
+    @Published var savedPostIDs: Set<String> = []
     
     private var isLoading = false
     
     private var listener: ListenerRegistration?
     
+    // MARK: - Dependencies
+    
     private let userRepository = UserRepository()
     
     private var userListeners: [String: ListenerRegistration] = [:]
     
+    // MARK: - Initializer
+    
+    init() {
+        
+        Task {
+            
+            await fetchSavedPostIDs()
+        }
+    }
+    
+    // MARK: Public Methods
     
     @MainActor
     func fetchUserIfNeeded(uid: String) async {
@@ -138,6 +156,50 @@ class ImageListViewModel: ObservableObject {
         }
     }
     
+    @MainActor
+    func fetchSavedPostIDs() async {
+        
+        do {
+
+            savedPostIDs = try await FirebaseService.shared.fetchSavedPostIDs()
+
+        } catch {
+            
+            print("Faild to fetch saved posts:", error)
+        }
+    }
+    
+    @MainActor
+    func toggleSave(post: Post) async {
+        
+        let postId = post.id
+        
+        do {
+            
+            let isSaved = savedPostIDs.contains(postId)
+            
+            try await FirebaseService.shared.toggleSave(
+                postId: postId,
+                isSaved: isSaved
+            )
+            
+            if isSaved {
+                
+                savedPostIDs.remove(postId)
+                
+            } else {
+                
+                savedPostIDs.insert(postId)
+                
+            }
+            
+        } catch {
+            
+            print("Failed to toggle save:", error)
+        }
+        
+        
+    }
     
 }
 

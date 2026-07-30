@@ -30,7 +30,7 @@ struct MetalCameraView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> MTKView {
         guard let device = MTLCreateSystemDefaultDevice() else {
-            print("Metal is not supported")
+            // print("Metal is not supported")
             return MTKView()
         }
 

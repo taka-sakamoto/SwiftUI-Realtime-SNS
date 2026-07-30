@@ -270,7 +270,6 @@ final class Renderer: NSObject, MTKViewDelegate {
     
     func setIntensity(_ intensity: Float) {
         currentIntensity = intensity
-        print("Intensity:", intensity)  // ログ用
     }
     
     func captureCurrentFrame() -> UIImage? {

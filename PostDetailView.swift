@@ -243,9 +243,11 @@ struct PostDetailView: View {
     
     private var actionBarSection: some View {
         
-        HStack(spacing: 28) {
+        HStack(spacing: 24) {
             
             likeGroup
+            
+            saveGroup
             
             commentGroup
             
@@ -344,6 +346,30 @@ struct PostDetailView: View {
             
             Text("\(post.commentCount)")
                 .foregroundStyle(.white)
+        }
+    }
+    
+    // MARK: - Components
+    
+    private var saveGroup: some View {
+        
+        Button {
+            
+            Task {
+                await viewModel.toggleSave(
+                    post: post
+                )
+                
+            }
+            
+        } label: {
+            
+            Image(
+                systemName: viewModel.savedPostIDs.contains(post.id)
+                ? "bookmark.fill"
+                : "bookmark"
+            )
+            .font(.title3)
         }
     }
     

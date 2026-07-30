@@ -51,7 +51,6 @@ final class CameraManager: NSObject, ObservableObject {
         ),
         let input = try? AVCaptureDeviceInput(device: device)
         else {
-            print("Camera device error")  // ログ用
             session.commitConfiguration()
             return
         }
@@ -135,10 +134,11 @@ final class CameraManager: NSObject, ObservableObject {
                 
            }
                 
-            
+        
         } catch {
             print("switch camera error:", error) // ログ用
         }
+         
         
         if let connection = videoOutput.connection(with: .video) {
             
