@@ -57,9 +57,9 @@ PostDetailView
 |---|---|---|
 |<img src="screenshots/feed.png" width="250" />|<img src="screenshots/camera.png" width="250" />|<img src="screenshots/filter.png" width="250" />|
 
-|New Post|Profile|
+|New Post|Profile|Saved Posts|
 |---|---|
-|<img src="screenshots/newpost.png" width="250" />|<img src="screenshots/profile.png" width="250" />|
+|<img src="screenshots/newpost.png" width="250" />|<img src="screenshots/profile.png" width="250" />|<img src="screenshots/savedposts.png" width="250" />|
 
 |Post Detail|Comment Menu|
 |---|---|
