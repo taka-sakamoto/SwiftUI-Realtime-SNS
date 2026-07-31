@@ -6,75 +6,34 @@
 
 ## Overview
 
+Overview
+
 SwiftUI Realtime SNS is an iOS social networking application built with SwiftUI, Metal, and Firebase.
 
-The app features real-time Metal camera filters, photo and video capture, and seamless integration with Firebase Authentication, Cloud Firestore, and Firebase Storage. Users can capture photos with live Metal filters, adjust filters before posting, upload images to Firebase, and interact with posts through likes, comments, and customizable user profiles.
-
-The application features a reusable SwiftUI component architecture, real-time Firestore updates, and efficient image loading using Kingfisher.
+The app features real-time Metal camera filters, photo and video capture, post creation, likes, comments, bookmarks (saved posts), user profiles, and seamless integration with Firebase Authentication, Cloud Firestore, and Firebase Storage.
 
 The project follows the MVVM architecture and demonstrates modern iOS development using Swift Concurrency (async/await), Firebase services, Metal image processing, and efficient image loading with Kingfisher.
 
-This project was developed as a portfolio application to showcase practical iOS development skills, combining camera technology, image processing, cloud services, and responsive SwiftUI user interfaces.
+The project follows the MVVM architecture and focuses on building a modern, real-time social networking experience with clean and maintainable SwiftUI code.
 
 ---
 
 ## ✨ Features
 
-### Authentication
-- Anonymous sign-in with Firebase Authentication
+✨ Features
 
-### Feed
-
-- View posts in real time using Cloud Firestore
-- Like posts
-- Double-tap to like
-- Real-time comments  
-- Create and delete comments  
-- Reusable CommentRow component  
-- Full-screen image viewer
-- Pinch-to-zoom image support
-- Optimized image loading with Kingfisher
-
-### Camera
-
-- Real-time Metal camera preview
-- Sepia, Mono, and Invert filters
-- Adjustable filter intensity
-- Front and rear camera switching
-- Filtered photo capture
-- Filtered video recording
-- Save captured media to the Photos library
-
-### Posting
-
-- Upload photos from the Photo Library
-- Direct camera-to-post workflow
-- Edit filters before uploading
-- Automatic image resizing (720 px)
-- JPEG compression for optimized uploads
-- Upload images to Firebase Storage
-- Store post metadata in Cloud Firestore
-
-### Profile
-
-- Edit display name and bio
-- Upload and update profile images
-- View your own posts
-- Real-time profile updates
-- Cached profile images with Kingfisher
-
-### Architecture
-
-- MVVM architecture
-- Swift Concurrency (async/await)
-- Firebase Authentication
-- Cloud Firestore
-- Firebase Storage
-- Metal
-- AVFoundation
-- Kingfisher
-- Reusable SwiftUI Components
-- Section-based View Composition
+- 📷 Real-time Metal camera filters
+- 🖼 Photo capture and library upload
+- 📝 Create and delete posts
+- ❤️ Like and unlike posts
+- 💬 Comment on posts
+- 🔖 Save (Bookmark) posts
+- 📂 View saved posts from your profile
+- 👤 Edit profile (display name, bio, profile image)
+- 🖼 Full-screen image viewer
+- ⚡ Real-time Firestore updates
+- 🔐 Firebase Anonymous Authentication
+- ☁️ Firebase Storage image uploads
 
 ---
 
@@ -206,11 +165,10 @@ posts
   
 ## 🚀 Future Improvements
 
-- Push Notifications
-- Video Feed
-- Search
-- User Follow
-- Comment editing
+- Push notifications
+- Follow system
+- User search
+- Notifications
 
 ---
 
