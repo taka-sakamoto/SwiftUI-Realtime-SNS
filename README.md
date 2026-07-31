@@ -57,13 +57,13 @@ PostDetailView
 |---|---|---|
 |<img src="screenshots/feed.png" width="250" />|<img src="screenshots/camera.png" width="250" />|<img src="screenshots/filter.png" width="250" />|
 
-|New Post|Profile|Saved Posts|
+|New Post|Profile|
 |---|---|
-|<img src="screenshots/newpost.png" width="250" />|<img src="screenshots/profile.png" width="250" />|<img src="screenshots/savedposts.png" width="250" />|
+|<img src="screenshots/newpost.png" width="250" />|<img src="screenshots/profile.png" width="250" />|
 
-|Post Detail|Comment Menu|
-|---|---|
-|<img src="screenshots/postdetail.png" width="250" />|<img src="screenshots/commentmenu.png" width="250" />|
+|Post Detail|Comment Menu|Saved Posts|
+|---|---|---|
+|<img src="screenshots/postdetail.png" width="250" />|<img src="screenshots/commentmenu.png" width="250" />|<img src="screenshots/savedposts.png" width="250" />|
 
  ---
  
