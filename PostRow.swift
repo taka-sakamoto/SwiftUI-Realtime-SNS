@@ -54,9 +54,14 @@ struct PostRow: View {
             }
             
             ZStack {
-                KFImage(URL(string: post.imageUrl))
-                    .resizable()
-                    .scaledToFit()
+                
+                PostImageView(
+                    post: post,
+                    namespace: namespace,
+                    isSource: isSource,
+                    contentMode: .fit,
+                    size: nil
+                )
                 
                 // 中央ハート❤️
                 if showBigHeart {

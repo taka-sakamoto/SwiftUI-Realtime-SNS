@@ -106,9 +106,13 @@ struct ProfileView: View {
                     } else {
                         
                         SavedPostsView(
-                            viewModel: imageListViewModel
+                            namespace: namespace,
+                            viewModel: imageListViewModel,
+                            selectedDetailPost: $selectedDetailPost,
+                            isSource: selectedDetailPost == nil
                             
                         )
+                        .frame(maxWidth: .infinity)
                     }
                 }
                 

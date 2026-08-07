@@ -16,7 +16,6 @@ struct SelectedImage: Identifiable {
 }
 
 struct ContentView: View {
-    // @StateObject var viewModel = ImageListViewModel()
     @ObservedObject var viewModel: ImageListViewModel
     @StateObject private var profileViewModel = ProfileViewModel()
     
@@ -112,6 +111,7 @@ struct ContentView: View {
                     },
                     viewModel: viewModel
                 )
+                .transition(.identity)
                 .zIndex(1)
             }
             

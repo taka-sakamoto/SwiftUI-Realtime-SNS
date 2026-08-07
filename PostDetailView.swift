@@ -12,15 +12,14 @@ import Kingfisher
 import FirebaseAuth
 
 struct PostDetailView: View {
+    
+    // MARK: - Properties
+    
     let post: Post
     let namespace: Namespace.ID
     let onClose: () -> Void
     
     @ObservedObject var viewModel: ImageListViewModel
-    
-    @State private var scale: CGFloat = 1.0
-    @State private var lastScale: CGFloat = 1.0
-    @State private var offsetY: CGFloat = 0
     
     @StateObject private var profileViewModel = ProfileViewModel()
     
@@ -34,6 +33,8 @@ struct PostDetailView: View {
     @State private var showDeleteAlert = false
     @State private var selectedComment: Comment?
     
+    // MARK: - Computed Properties
+    
     private var displayName: String {
         profileViewModel.user?.displayName ?? post.userName
     }
@@ -46,29 +47,43 @@ struct PostDetailView: View {
         post.createdAt.relativeString()
     }
     
+    private var currentPost: Post {
+        
+        let found = viewModel.posts.first { $0.id == post.id } // ログ用
+        
+        print("DETAIL POST:", post.id)
+        print("FOUND:", found?.id ?? "nil")
+        print("POST COUNT:", viewModel.posts.count)
+        
+        return found ?? post  // ログ用ここまで
+        
+    }
+    
     private var isLiked: Bool {
         
         guard let uid = Auth.auth().currentUser?.uid else {
             return false
         }
         
-        return post.likedBy.contains(uid)
+        return currentPost.likedBy.contains(uid)
     }
+    
+    // MARK: - Body
     
     var body: some View {
         
         ZStack {
             Color.black
                 .ignoresSafeArea()
-            
+           
             ScrollView {
                 
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(spacing: 16) {
                     
                     headerSection
                     
                     imageSection
-
+                    
                     actionBarSection
                     
                     captionSection
@@ -83,7 +98,8 @@ struct PostDetailView: View {
                     
                     
                 }
-                .padding(.vertical)
+                .frame(maxWidth: .infinity)
+                // .padding(.vertical)
                 
             }
         }
@@ -99,34 +115,6 @@ struct PostDetailView: View {
         .onTapGesture {
             onClose()
         }
-        
-        .offset(y: offsetY)
-        .gesture(
-            DragGesture()
-                .onChanged { value in
-                    offsetY = value.translation.height
-                }
-                .onEnded { value in
-                    if value.translation.height > 150 {
-
-                        withAnimation(.spring(
-                            response: 0.4,
-                            dampingFraction: 0.85
-                        )) {
-
-                            onClose()
-                        }
-
-                    } else {
-
-                        withAnimation {
-
-                            offsetY = 0
-                        }
-                    }
-                }
-        )
-        
         .alert("コメントを削除しますか？",
                isPresented: $showDeleteAlert) {
             
@@ -146,6 +134,8 @@ struct PostDetailView: View {
             Button("キャンセル", role: .cancel) { }
         }
     }
+    
+    // MARK: - SEctions
     
     private var headerSection: some View {
         
@@ -175,70 +165,17 @@ struct PostDetailView: View {
     }
     
     private var imageSection: some View {
-        
-        ZStack {
-            
-            HStack {
-                
-                Spacer()
-                
-                KFImage(URL(string: post.imageUrl))
-                    .resizable()
-                    .scaledToFit()
-                    .frame(
-                        maxWidth: 350,
-                        maxHeight: 600
-                    )
-                
-                    .matchedGeometryEffect(
-                        id: post.id,
-                        in: namespace,
-                        isSource: false
-                    )
-                
-                Spacer()
-            }
-            
-            if showBigHeart {
-                
-                Image(systemName: "heart.fill")
-                    .font(.system(size: 80))
-                    .foregroundStyle(.white.opacity(0.9))
-                    .shadow(radius: 10)
-            }
-            
-        }
-        .onTapGesture(count: 2) {
-            
-            viewModel.toggleLike(post: post)
-            
-            let generator = UIImpactFeedbackGenerator(style: .light)
-            generator.impactOccurred()
-            
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                showBigHeart = true
-            }
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                withAnimation {
-                    showBigHeart = false
-                }
-                
-            }
-        }
-    }
-    
-    private var captionSection: some View {
-        
-        Group {
-            
-            if !post.caption.isEmpty {
-                
-                Text(post.caption)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal)
-            }
-        }
+
+       PostImageView(
+        post: post,
+        namespace: namespace,
+        isSource: false,
+        contentMode: .fit,
+        size: CGSize(
+            width: UIScreen.main.bounds.width,
+            height: UIScreen.main.bounds.width
+        )
+       )
     }
     
     private var actionBarSection: some View {
@@ -257,6 +194,24 @@ struct PostDetailView: View {
         
     }
     
+    private var captionSection: some View {
+        
+        Group {
+            
+            if !post.caption.isEmpty {
+                
+                Text(post.caption)
+                    .foregroundStyle(.white)
+                    .frame(
+                        maxWidth: .infinity,
+                        alignment: .leading
+                    )
+                    .padding(.horizontal)
+            }
+        }
+    }
+   
+    
     private var commentsSection: some View {
         
         ForEach(comments) { comment in
@@ -272,8 +227,6 @@ struct PostDetailView: View {
         }
         .foregroundStyle(.white)
     }
-    
-    // MARK: - Sections
     
     private var commentInputSection: some View {
         
@@ -292,10 +245,7 @@ struct PostDetailView: View {
         }
     }
     
-    private func likePost() {
-        
-        // 後で既存Like処理を移植
-    }
+    // MARK: - Components
     
     private var likeGroup: some View {
         
@@ -303,7 +253,7 @@ struct PostDetailView: View {
             
             Button {
                 
-                viewModel.toggleLike(post: post)
+                viewModel.toggleLike(post: currentPost)
                 
                 let generator = UIImpactFeedbackGenerator(style: .light)
                 generator.impactOccurred()
@@ -325,7 +275,7 @@ struct PostDetailView: View {
                     )
             }
             
-            Text("\(post.likedBy.count)")
+            Text("\(currentPost.likedBy.count)")
                 .foregroundStyle(.white)
         }
     }
@@ -349,15 +299,13 @@ struct PostDetailView: View {
         }
     }
     
-    // MARK: - Components
-    
     private var saveGroup: some View {
         
         Button {
             
             Task {
                 await viewModel.toggleSave(
-                    post: post
+                    post: currentPost
                 )
                 
             }
@@ -384,8 +332,6 @@ struct PostDetailView: View {
             self.comments = comments
         }
     }
-    
-    // MARK: - Private Methods
     
     private func addComment() {
         
