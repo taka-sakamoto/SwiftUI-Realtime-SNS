@@ -16,6 +16,9 @@ struct User: Identifiable, Codable {
     var bio: String
     var profileImageURL: String
     
+    var followersCount: Int = 0
+    var followingCount: Int = 0
+    
     var createdAt: Date
     var updatedAt: Date
 }

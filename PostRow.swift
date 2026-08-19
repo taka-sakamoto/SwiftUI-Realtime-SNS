@@ -17,6 +17,7 @@ struct PostRow: View {
     let onTap: () -> Void
     let onLike: () -> Void
     let onComment: () -> Void
+    let onProfileTap: () -> Void
     
     let namespace: Namespace.ID
     let isSource: Bool
@@ -31,27 +32,29 @@ struct PostRow: View {
         let isLiked = post.likedBy.contains(Auth.auth().currentUser?.uid ?? "")
 
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 8) {
-                ProfileImageView(
-                    imageURL: user?.profileImageURL,
-                    selectedImage: nil,
-                    displayName: user?.displayName ?? post.userName
-                )
-                .frame(width: 36, height: 36)
-                
-                VStack(alignment: .leading, spacing: 2) {
+            Button {
+                onProfileTap()
+            } label: {
+                HStack(spacing: 8) {
+                    ProfileImageView(
+                        imageURL: user?.profileImageURL,
+                        selectedImage: nil,
+                        displayName: user?.displayName ?? post.userName
+                    )
+                    .frame(width: 36, height: 36)
                     
-                    Text(user?.displayName ?? post.userName)
-                        .font(.headline)
-                    
-                    Text(post.createdAt.relativeString())
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                    VStack(alignment: .leading, spacing: 2) {
+                        
+                        Text(user?.displayName ?? post.userName)
+                            .font(.headline)
+                        
+                        Text(post.createdAt.relativeString())
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
                 }
-                
-                Spacer()
-                
             }
+            .buttonStyle(.plain)
             
             ZStack {
                 

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Kingfisher
+import FirebaseAuth
 
 struct ProfileView: View {
     
@@ -18,6 +19,8 @@ struct ProfileView: View {
     @ObservedObject var imageListViewModel: ImageListViewModel
     
     let namespace: Namespace.ID
+    
+    let userID: String?
     
     // MARK: - State
     
@@ -32,6 +35,14 @@ struct ProfileView: View {
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
+    
+    private var isMyProfile: Bool {
+        guard let userID else {
+            return true
+        }
+        
+        return userID == Auth.auth().currentUser?.uid
+    }
     
     var body: some View {
         
@@ -61,29 +72,68 @@ struct ProfileView: View {
                             .padding(.horizontal)
                     }
                     
-                    Button {
-                        showingEditProfile = true
-                    } label: {
-                        Text("Edit Profile")
+                    if isMyProfile {
+                        
+                        Button {
+                            showingEditProfile = true
+                        } label: {
+                            Text("Edit Profile")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .background(Color(.systemGray6))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+                        .padding(.horizontal)
+                        
+                    } else {
+                        
+                        Button {
+                            print("FOLLOW BUTTON TAPPED")  // ログ用
+                            print("TARGET USER ID:", userID ?? "nil")  // ログ用
+                            
+                            guard let userID else { return }
+                            
+                            Task {
+                                if viewModel.isFollowing {
+                                    await viewModel.unfollow(targetUserID: userID)
+                                } else {
+                                    await viewModel.follow(targetUserID: userID)
+                                }
+                            }
+                        } label: {
+                            Text(viewModel.isFollowing ? "Following" : "Follow")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .background(Color(.systemGray6))
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+                        .padding(.horizontal)
+                    }
+                    
+                    if isMyProfile {
+                        Picker("", selection: $selectedTab) {
+                            
+                            Text("Posts")
+                                .tag(0)
+                            
+                            Text("Saved")
+                                .tag(1)
+                        }
+                        .pickerStyle(.segmented)
+                        .padding(.horizontal)
+                        
+                    } else {
+                        
+                        Text("Post")
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
-                            .background(Color(.systemGray6))
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .padding(.vertical, 8)
                     }
-                    .padding(.horizontal)
-                    
-                    Picker("", selection: $selectedTab) {
-                        
-                        Text("Posts")
-                            .tag(0)
-                        
-                        Text("Saved")
-                            .tag(1)
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal)
                     
                     if selectedTab == 0 {
                         
@@ -119,12 +169,22 @@ struct ProfileView: View {
                 .padding()
             }
             .onAppear {
-                viewModel.fetchMyPosts()
-               
-                    Task {
-                        
-                        await viewModel.loadUser()
+                let targetUserID =
+                userID ?? Auth.auth().currentUser?.uid
+                
+                guard let targetUserID else {
+                    return
+                }
+                
+                Task {
+                    await viewModel.loadProfile(userID: targetUserID)
+                    
+                    if !isMyProfile {
+                        await viewModel.checkFollowing(
+                            targetUserID: targetUserID
+                        )
                     }
+                }
             }
            
             if let post = selectedDetailPost {

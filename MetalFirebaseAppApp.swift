@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseCore
+import FirebaseAuth
 
 @main
 struct MetalFirebaseAppApp: App {
@@ -41,7 +42,8 @@ struct MetalFirebaseAppApp: App {
                 
                 ProfileView(
                     imageListViewModel: imageListViewModel,
-                    namespace: animation
+                    namespace: animation,
+                    userID: Auth.auth().currentUser?.uid
                 )
                     .tabItem {
                         Label("Profile",

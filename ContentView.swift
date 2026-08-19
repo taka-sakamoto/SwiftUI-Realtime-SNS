@@ -15,6 +15,10 @@ struct SelectedImage: Identifiable {
     let url: String
 }
 
+struct SelectedProfile: Identifiable, Hashable {
+    let id: String
+}
+
 struct ContentView: View {
     @ObservedObject var viewModel: ImageListViewModel
     @StateObject private var profileViewModel = ProfileViewModel()
@@ -22,6 +26,7 @@ struct ContentView: View {
     @State private var selectedDetailPost: Post? // 拡大表示用
     @State private var selectedCommentPost: Post?
     @State private var showUploadView = false
+    @State private var selectedProfile: SelectedProfile?
     
     let columns = [
         GridItem(.flexible()),
@@ -48,7 +53,7 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             
-            NavigationView {
+            NavigationStack {
                 
                 VStack {
                     
@@ -82,6 +87,9 @@ struct ContentView: View {
                                     onComment: {
                                         selectedCommentPost = post
                                     },
+                                    onProfileTap: {
+                                        selectedProfile = SelectedProfile(id: post.userId)
+                                    },
                                     namespace: namespace,
                                     isSource: selectedDetailPost == nil
                                 )
@@ -93,6 +101,13 @@ struct ContentView: View {
                     
                 }
                 .navigationTitle("Images")
+                .navigationDestination(item: $selectedProfile) { profile in
+                        ProfileView(
+                            imageListViewModel: viewModel,
+                            namespace: namespace,
+                            userID: profile.id
+                        )
+                }
             }
             .onAppear {
                 

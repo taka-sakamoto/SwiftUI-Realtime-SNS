@@ -16,6 +16,7 @@ final class ProfileViewModel: ObservableObject {
     @Published var posts: [Post] = []
     
     @Published var user: User?
+    @Published var isFollowing = false
     @Published var isLoading = false
     @Published var errorMessage: String?
     
@@ -77,14 +78,14 @@ final class ProfileViewModel: ObservableObject {
         }
     }
     
-    func fetchMyPosts() {
+    // MARK: - Fetch Posts
+    
+    func fetchPosts(userID: String) {
         
         guard postsListener == nil else { return }
         
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        
         postsListener = db.collection("posts")
-            .whereField("userId", isEqualTo: uid)
+            .whereField("userId", isEqualTo: userID)
             .order(by: "createdAt", descending: true)
             .addSnapshotListener { [weak self] snapshot, error in
                 
@@ -196,5 +197,99 @@ final class ProfileViewModel: ObservableObject {
         } catch {
             print("Failed to fetch user: \(error.localizedDescription)")
         }
+    }
+    
+    // MARK: - Follow
+    
+    @MainActor
+    func checkFollowing(targetUserID: String) async {
+        
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        guard currentUserID != targetUserID else {
+            isFollowing = false
+            return
+        }
+        
+        do {
+            isFollowing = try await repository.isFollowing(
+                currentUserID: currentUserID,
+                targetUserID: targetUserID
+            )
+                
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+    
+    @MainActor
+    func follow(targetUserID: String) async {
+
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        guard currentUserID != targetUserID else {
+            return
+        }
+        
+        do {
+            try await repository.followUser(
+                currentUserID: currentUserID,
+                targetUserID: targetUserID
+            )
+            
+            isFollowing = true
+            
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+    
+    // MARK: - Unfollow
+    
+    @MainActor
+    func unfollow(targetUserID: String) async {
+        
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            return
+        }
+        
+        guard currentUserID != targetUserID else {
+            return
+        }
+        
+        do {
+            try await repository.unfollowUser(
+                currentUserID: currentUserID,
+                targetUserID: targetUserID
+            )
+            
+            isFollowing = false
+            
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+    
+    // MARK: - Load Profile
+    
+    @MainActor
+    func loadProfile(userID: String) async {
+        
+        isLoading = true
+        
+        do {
+            user = try await repository.fetchUser(uid: userID)
+            
+            fetchPosts(userID: userID)
+            
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        
+        isLoading = false
     }
 }

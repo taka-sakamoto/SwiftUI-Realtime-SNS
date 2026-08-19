@@ -219,16 +219,18 @@ class ImageListViewModel: ObservableObject {
     
     private func updateSavedPosts() {
         
+        /*
         print("UPDATE SAVED")  // ログ用
         print("savedPostIDs:", savedPostIDs)  // ログ用
         print("posts:", posts.map { $0.id })  // ログ用
+        */
         
         savedPosts = posts.filter { post in
             
             savedPostIDs.contains(post.id)
         }
         
-        print("savedPosts:", savedPosts.map { $0.id })  // ログ用
+        // print("savedPosts:", savedPosts.map { $0.id })  // ログ用
         
     }
     
