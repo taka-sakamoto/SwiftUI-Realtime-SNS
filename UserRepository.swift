@@ -355,4 +355,28 @@ final class UserRepository {
         return document.exists
     }
     
+    // MARK: - Follow Lists
+    
+    func fetchFollowingUserIDs(userID: String) async throws -> [String] {
+        
+        let snapshot = try await db
+            .collection(collection)
+            .document(userID)
+            .collection("following")
+            .getDocuments()
+        
+        return snapshot.documents.map { $0.documentID }
+    }
+    
+    func fetchFollowerUserIDs(userID: String) async throws -> [String] {
+        
+        let snapshot = try await db
+            .collection(collection)
+            .document(userID)
+            .collection("followers")
+            .getDocuments()
+        
+        return snapshot.documents.map { $0.documentID }
+    }
+    
 }

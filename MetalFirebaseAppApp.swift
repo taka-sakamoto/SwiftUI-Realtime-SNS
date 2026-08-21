@@ -40,11 +40,14 @@ struct MetalFirebaseAppApp: App {
                         systemImage: "camera")
                     }
                 
-                ProfileView(
-                    imageListViewModel: imageListViewModel,
-                    namespace: animation,
-                    userID: Auth.auth().currentUser?.uid
-                )
+                NavigationStack {
+                    
+                    ProfileView(
+                        imageListViewModel: imageListViewModel,
+                        namespace: animation,
+                        userID: Auth.auth().currentUser?.uid
+                    )
+                }
                     .tabItem {
                         Label("Profile",
                               systemImage: "person")

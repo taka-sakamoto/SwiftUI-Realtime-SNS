@@ -62,6 +62,40 @@ struct ProfileView: View {
                         .font(.title2)
                         .fontWeight(.bold)
                     
+                    HStack(spacing: 40) {
+                        
+                        NavigationLink {
+                            FollowersView(
+                                userID: userID ?? Auth.auth().currentUser?.uid ?? ""
+                            )
+                        } label: {
+                            VStack(spacing: 4) {
+                                Text("\(viewModel.user?.followersCount ?? 0)")
+                                    .font(.headline)
+                                    
+                                Text("Followers")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        
+                        NavigationLink {
+                            FollowingView(
+                                userID: userID ?? Auth.auth().currentUser?.uid ?? ""
+                            )
+                        } label: {
+                            VStack(spacing: 4) {
+                                Text("\(viewModel.user?.followingCount ?? 0)")
+                                    .font(.headline)
+                                
+                                Text("Following")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                         
+                    }
+                    
                     if let bio = viewModel.user?.bio,
                        !bio.isEmpty {
                         
@@ -89,10 +123,9 @@ struct ProfileView: View {
                         
                     } else {
                         
-                        Button {
-                            print("FOLLOW BUTTON TAPPED")  // ログ用
-                            print("TARGET USER ID:", userID ?? "nil")  // ログ用
-                            
+                        FollowButton(
+                            isFollowing: viewModel.isFollowing
+                        ) {
                             guard let userID else { return }
                             
                             Task {
@@ -102,16 +135,9 @@ struct ProfileView: View {
                                     await viewModel.follow(targetUserID: userID)
                                 }
                             }
-                        } label: {
-                            Text(viewModel.isFollowing ? "Following" : "Follow")
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
-                                .background(Color(.systemGray6))
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
                         .padding(.horizontal)
+                        
                     }
                     
                     if isMyProfile {
