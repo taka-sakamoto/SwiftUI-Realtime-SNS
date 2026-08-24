@@ -13,14 +13,17 @@ struct ProfileView: View {
     
     // MARK: - Dependencies
     
-    @StateObject private var viewModel =
-    ProfileViewModel()
+    @ObservedObject var viewModel: ProfileViewModel
     
     @ObservedObject var imageListViewModel: ImageListViewModel
     
     let namespace: Namespace.ID
     
     let userID: String?
+    
+    let onSwitchUser: () -> Void
+    
+    let showsSwitchUser: Bool
     
     // MARK: - State
     
@@ -121,10 +124,16 @@ struct ProfileView: View {
                         }
                         .padding(.horizontal)
                         
+                        if showsSwitchUser {
+                            Button("Switch User") {
+                                onSwitchUser()
+                            }
+                        }
+                        
                     } else {
                         
                         FollowButton(
-                            isFollowing: viewModel.isFollowing
+                            state: viewModel.isFollowing ? .following : .follow
                         ) {
                             guard let userID else { return }
                             
@@ -139,6 +148,7 @@ struct ProfileView: View {
                         .padding(.horizontal)
                         
                     }
+                    
                     
                     if isMyProfile {
                         Picker("", selection: $selectedTab) {

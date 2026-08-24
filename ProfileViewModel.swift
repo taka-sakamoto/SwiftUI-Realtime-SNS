@@ -17,6 +17,7 @@ final class ProfileViewModel: ObservableObject {
     
     @Published var user: User?
     @Published var isFollowing = false
+    @Published var isFollowedBy = false
     @Published var isLoading = false
     @Published var errorMessage: String?
     
@@ -210,13 +211,21 @@ final class ProfileViewModel: ObservableObject {
         
         guard currentUserID != targetUserID else {
             isFollowing = false
+            isFollowedBy = false
             return
         }
         
         do {
+            // 自分 → 相手
             isFollowing = try await repository.isFollowing(
                 currentUserID: currentUserID,
                 targetUserID: targetUserID
+            )
+            
+            // 相手 → 自分
+            isFollowedBy = try await repository.isFollowing(
+                currentUserID: targetUserID,
+                targetUserID: currentUserID
             )
                 
         } catch {
@@ -291,5 +300,20 @@ final class ProfileViewModel: ObservableObject {
         }
         
         isLoading = false
+    }
+    
+    // MARK: - Clear User State
+    
+    func clearUserState() {
+        
+        postsListener?.remove()
+        postsListener = nil
+        
+        posts = []
+        user = nil
+        isFollowing = false
+        isFollowedBy = false
+        isLoading = false
+        errorMessage = nil
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct FollowersView: View {
     
@@ -23,13 +24,26 @@ struct FollowersView: View {
         List {
             ForEach(viewModel.users) { user in
                 
-                UserRow(
-                    user: user,
-                    isFollowing: viewModel.followingUserIDs.contains(user.id),
-                    onFollowTap: {
-                        // 次に実装
-                    }
-                )
+                if userID != Auth.auth().currentUser?.uid ||
+                    user.id != Auth.auth().currentUser?.uid {
+                    
+                    UserRow(
+                        user: user,
+                        followState: followState(for: user),
+                        onFollowTap: {
+                            print("BUTTON USER ID:", user.id)  // ログ用
+                            print("CURRENT USER ID:", Auth.auth().currentUser?.uid ?? "nil")  // ログ用
+                            
+                            Task {
+                                if viewModel.followingUserIDs.contains(user.id) {
+                                    await viewModel.unfollow(userID: user.id)
+                                } else {
+                                    await viewModel.follow(userID: user.id)
+                                }
+                            }
+                        }
+                    )
+                }
             }
         }
         .navigationTitle("Followers")
@@ -37,6 +51,23 @@ struct FollowersView: View {
             await viewModel.fetchFollowers(userID: userID)
             await viewModel.fetchFollowingStatus()
         }
+    }
+    
+    // MARK: -Follow State
+    
+    private func followState(for user: User) -> FollowButton.State? {
+        
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+        
+        guard user.id != currentUserID else {
+            return nil
+        }
+        
+        return viewModel.followingUserIDs.contains(user.id)
+            ? .following
+            : .followBack
     }
 }
 

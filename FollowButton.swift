@@ -9,9 +9,15 @@ import SwiftUI
 
 struct FollowButton: View {
     
-    // MARK: - Dependencies
+    // MARK: - State
     
-    let isFollowing: Bool
+    enum State {
+        case follow
+        case following
+        case followBack
+    }
+    
+    let state: State
     let action: () -> Void
     
     // MARK: - Body
@@ -20,13 +26,26 @@ struct FollowButton: View {
         Button {
             action()
         } label: {
-            Text(isFollowing ? "Following" : "Follow")
+            Text(title)
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
                 .background(Color(.systemGray6))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
+        }
+    }
+    
+    // MARK: - Private
+    
+    private var title: String {
+        switch state {
+        case .follow:
+            return "Follow"
+        case.following:
+            return "Following"
+        case .followBack:
+            return "Follow back"
         }
     }
 }

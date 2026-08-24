@@ -13,12 +13,13 @@ struct UserRow: View {
     // MARK: - Dependencies
     
     let user: User
-    let isFollowing: Bool
+    let followState: FollowButton.State?
     let onFollowTap: () -> Void
     
     // MARK: - Body
     
     var body: some View {
+        
         HStack(spacing: 12) {
             
             KFImage(URL(string: user.profileImageURL ?? ""))
@@ -38,11 +39,13 @@ struct UserRow: View {
             
             Spacer()
             
-            FollowButton(
-                isFollowing: isFollowing,
-                action: onFollowTap
-            )
-            .frame(width: 110)
+            if let followState {
+                FollowButton(
+                    state: followState,
+                    action: onFollowTap
+                )
+                .frame(width: 110)
+            }
         }
         .padding(.vertical, 6)
     }

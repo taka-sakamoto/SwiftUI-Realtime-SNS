@@ -50,6 +50,38 @@ struct ContentView: View {
         }
     }
     
+    // MARK: - Sign Out
+    
+    private func signOut() -> Bool {
+        
+        profileViewModel.clearUserState()
+        
+        do {
+            
+            try Auth.auth().signOut()
+            
+            print("SIGN OUT SUCCESS")
+            
+            return true
+            
+        } catch {
+            print("SIGN OUT FAILED:", error.localizedDescription)
+            
+            return false
+        }
+    }
+    
+    // MARK: - Switch Anonymous User
+    
+    private func switchAnonymousUser() {
+        
+        guard signOut() else {
+            return
+        }
+        
+        signInAnonymously()
+    }
+    
     var body: some View {
         ZStack {
             
@@ -103,15 +135,19 @@ struct ContentView: View {
                 .navigationTitle("Images")
                 .navigationDestination(item: $selectedProfile) { profile in
                         ProfileView(
+                            viewModel: profileViewModel,
                             imageListViewModel: viewModel,
                             namespace: namespace,
-                            userID: profile.id
+                            userID: profile.id,
+                            onSwitchUser: {
+                                switchAnonymousUser()
+                            },
+                            showsSwitchUser: false
                         )
                 }
             }
             .onAppear {
                 
-                signInAnonymously()
                 viewModel.startListening()
                
             }
@@ -140,7 +176,7 @@ struct ContentView: View {
             PostUploadView(
                 userName: profileViewModel.user?.displayName ?? ""
             )
-            
+
         }
         
     }

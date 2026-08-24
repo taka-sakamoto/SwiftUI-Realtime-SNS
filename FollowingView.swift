@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct FollowingView: View {
     
@@ -25,9 +26,15 @@ struct FollowingView: View {
                 
                 UserRow(
                     user: user,
-                    isFollowing: viewModel.followingUserIDs.contains(user.id),
+                    followState: followState(for: user),
                     onFollowTap: {
-                        // 次に実装
+                        Task {
+                            if viewModel.followingUserIDs.contains(user.id) {
+                                await viewModel.unfollow(userID: user.id)
+                            } else {
+                                await viewModel.follow(userID: user.id)
+                            }
+                        }
                     }
                 )
             }
@@ -37,6 +44,23 @@ struct FollowingView: View {
             await viewModel.fetchFollowing(userID: userID)
             await viewModel.fetchFollowingStatus()
         }
+    }
+    
+    // MARK: - Follow State
+    
+    private func followState(for user: User) -> FollowButton.State? {
+        
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+        
+        guard user.id != currentUserID else {
+            return nil
+        }
+        
+        return viewModel.followingUserIDs.contains(user.id)
+        ? .following
+        : .follow
     }
 }
 
