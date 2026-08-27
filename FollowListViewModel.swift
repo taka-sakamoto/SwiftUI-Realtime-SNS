@@ -34,9 +34,6 @@ final class FollowListViewModel: ObservableObject {
             let userIDs = try await  repository.fetchFollowerUserIDs(
                 userID: userID
             )
-            
-            print("FETCH FOLLOWERS FOR:", userID) // ログ用
-            print("FOLLOWER USER IDS:", userIDs)  // ログ用
 
             let fetchedUsers = try await withThrowingTaskGroup(
                 of: User?.self
@@ -134,18 +131,12 @@ final class FollowListViewModel: ObservableObject {
     func follow(userID: String) async {
         
         guard let currentUserID = Auth.auth().currentUser?.uid else {
-            print("FOLLOW: currentUserID is nil")  // ログ用
             return
         }
         
         guard currentUserID != userID else {
-            print("FOLLOW: same user")  // ログ用
             return
         }
-        
-        print("FOLLOW START")  // ログ用
-        print("CURRENT USER:", currentUserID)  // ログ用
-        print("TARGET USER:", userID)  // ログ用
         
         do {
             try await repository.followUser(
@@ -155,11 +146,8 @@ final class FollowListViewModel: ObservableObject {
             
             followingUserIDs.insert(userID)
             
-            print("FOLLOW SUCCESS")  // ログ用
-            print("FOLLOWING IDS:", followingUserIDs)  // ログ用
-            
         } catch {
-            print("FOLLOW FAILED:", error.localizedDescription)  // ログ用
+            
             errorMessage = error.localizedDescription
         }
     }

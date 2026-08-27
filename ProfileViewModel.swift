@@ -83,7 +83,8 @@ final class ProfileViewModel: ObservableObject {
     
     func fetchPosts(userID: String) {
         
-        guard postsListener == nil else { return }
+        postsListener?.remove()
+        postsListener = nil
         
         postsListener = db.collection("posts")
             .whereField("userId", isEqualTo: userID)
@@ -91,11 +92,22 @@ final class ProfileViewModel: ObservableObject {
             .addSnapshotListener { [weak self] snapshot, error in
                 
                 guard let self else { return }
-                guard let documents = snapshot?.documents else { return }
+                
+                if let error {
+                    Task { @MainActor in
+                        self.errorMessage = error.localizedDescription
+                    }
+                    return
+                }
+                
+                guard let documents = snapshot?.documents else {
+                    return
+                }
                 
                 let posts = documents.compactMap { doc -> Post in
                     
                     let data = doc.data()
+                    
                     let timestamp = data["createdAt"] as? Timestamp
                     
                     return Post(
@@ -115,7 +127,6 @@ final class ProfileViewModel: ObservableObject {
                 
                 Task { @MainActor in
                     self.posts = posts
-                    print("Profile posts updated:", self.posts.count)
                     
                 }
                 

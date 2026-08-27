@@ -18,7 +18,7 @@ struct MetalFirebaseAppApp: App {
     
     @StateObject private var profileViewModel = ProfileViewModel()
     
-    @State private var currentUserID: String?
+    @StateObject private var authViewModel = AuthViewModel()
 
     init() {
         FirebaseApp.configure()
@@ -26,91 +26,24 @@ struct MetalFirebaseAppApp: App {
     
     // MARK: - Authentication
     
-    private func signInAnonymously() {
-        
-        Auth.auth().signInAnonymously { result, error in
-            
-            if let error = error {
-                print("Auth error:", error.localizedDescription)
-                return
-            }
-            
-            guard let uid = result?.user.uid else {
-                return
-            }
-            
-            print("UserID:", uid)
-            
-            Task { @MainActor in
-                currentUserID = uid
-                await profileViewModel.loadOrCreateUser()
-            }
-        }
-    }
-    
-    private func switchAnonymousUser() {
-        
-        profileViewModel.clearUserState()
-        currentUserID = nil
-        
-        do {
-            try Auth.auth().signOut()
-            
-            print("SIGN OUT SUCCESS")
-            
-            signInAnonymously()
-            
-        } catch {
-            print("SIGN OUT FAILED:", error.localizedDescription)
-        }
-    }
-    
     var body: some Scene {
         WindowGroup {
             
-            TabView {
+            if authViewModel.userID == nil {
                 
-                ContentView(
-                    viewModel: imageListViewModel,
+                LoginView(
+                    authViewModel: authViewModel,
+                    profileViewModel: profileViewModel
+                )
+                
+            } else {
+                
+                MainTabView(
+                    imageListViewModel: imageListViewModel,
+                    profileViewModel: profileViewModel,
+                    authViewModel: authViewModel,
                     namespace: animation
                 )
-                .tabItem {
-                    Label(
-                        "Feed",
-                        systemImage: "house"
-                    )
-                }
-                
-                CameraScreen()
-                    .tabItem {
-                        Label(
-                            "Camera",
-                            systemImage: "camera"
-                        )
-                    }
-                
-                NavigationStack {
-                    
-                    ProfileView(
-                        viewModel: profileViewModel,
-                        imageListViewModel: imageListViewModel,
-                        namespace: animation,
-                        userID: currentUserID,
-                        onSwitchUser: {
-                            switchAnonymousUser()
-                        },
-                        showsSwitchUser: true
-                    )
-                }
-                .tabItem {
-                    Label(
-                        "Profile",
-                        systemImage: "person"
-                    )
-                }
-            }
-            .task {
-                signInAnonymously()
             }
         }
     }

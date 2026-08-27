@@ -21,9 +21,7 @@ struct ProfileView: View {
     
     let userID: String?
     
-    let onSwitchUser: () -> Void
-    
-    let showsSwitchUser: Bool
+    let onLogout: () -> Void
     
     // MARK: - State
     
@@ -120,15 +118,16 @@ struct ProfileView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 10)
                                 .background(Color(.systemGray6))
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .clipShape(
+                                    RoundedRectangle(cornerRadius: 10)
+                                )
                         }
                         .padding(.horizontal)
                         
-                        if showsSwitchUser {
-                            Button("Switch User") {
-                                onSwitchUser()
-                            }
+                        Button("Logout") {
+                            onLogout()
                         }
+                        .padding(.horizontal)
                         
                     } else {
                         

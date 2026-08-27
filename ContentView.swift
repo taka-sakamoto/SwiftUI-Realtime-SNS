@@ -21,6 +21,8 @@ struct SelectedProfile: Identifiable, Hashable {
 
 struct ContentView: View {
     @ObservedObject var viewModel: ImageListViewModel
+    @ObservedObject var authViewModel: AuthViewModel
+    
     @StateObject private var profileViewModel = ProfileViewModel()
     
     @State private var selectedDetailPost: Post? // 拡大表示用
@@ -59,8 +61,6 @@ struct ContentView: View {
         do {
             
             try Auth.auth().signOut()
-            
-            print("SIGN OUT SUCCESS")
             
             return true
             
@@ -139,10 +139,9 @@ struct ContentView: View {
                             imageListViewModel: viewModel,
                             namespace: namespace,
                             userID: profile.id,
-                            onSwitchUser: {
-                                switchAnonymousUser()
-                            },
-                            showsSwitchUser: false
+                            onLogout:  {
+                                authViewModel.signOut()
+                            }
                         )
                 }
             }

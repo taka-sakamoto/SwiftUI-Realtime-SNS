@@ -31,8 +31,6 @@ struct FollowersView: View {
                         user: user,
                         followState: followState(for: user),
                         onFollowTap: {
-                            print("BUTTON USER ID:", user.id)  // ログ用
-                            print("CURRENT USER ID:", Auth.auth().currentUser?.uid ?? "nil")  // ログ用
                             
                             Task {
                                 if viewModel.followingUserIDs.contains(user.id) {

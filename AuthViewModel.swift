@@ -9,25 +9,76 @@ import Foundation
 import FirebaseAuth
 import Combine
 
-class AuthViewModel: ObservableObject {
+@MainActor
+final class AuthViewModel: ObservableObject {
     
-    @Published var userId: String?
+    // MARK: - State
+    
+    @Published var userID: String?
+    
+    // MARK: - Dependencies
+    
+    private var authStateHandle: AuthStateDidChangeListenerHandle?
+    
+    // MARK: - Initialzation
     
     init() {
-        signInAnonymously()
+        
+        authStateHandle = Auth.auth().addStateDidChangeListener { [weak self] _, user in
+            
+            self?.userID = user?.uid
+            
+        }
     }
     
-    func signInAnonymously() {
-        Auth.auth().signInAnonymously { result, error in
-            if let error = error {
-                print("Login error:", error)
-                return
-            }
-            
-            self.userId = result?.user.uid
-            print("UserID:", self.userId ?? "")
-        }
+    // MARK: - Sign In
+    
+    func signIn(email: String, password: String) async -> Bool {
         
+        do {
+            
+            let result = try await Auth.auth()
+                .signIn(
+                    withEmail: email,
+                    password: password
+                )
+            
+            userID = result.user.uid
+            
+            return true
+            
+        } catch {
+            
+            print("SIGN IN ERROR:", error.localizedDescription)
+            
+            return false
+        }
+    }
+    
+    // MARK: - Sign Out
+    
+    func signOut() {
+        
+        do {
+            
+            try Auth.auth().signOut()
+            
+            userID = nil
+            
+        } catch {
+            
+            print("SIGN OUT FAILED:", error.localizedDescription)
+        }
+    }
+    
+    // MARK: - Deinitialization
+    
+    deinit {
+        
+        if let authStateHandle {
+            
+            Auth.auth().removeStateDidChangeListener(authStateHandle)
+        }
     }
     
 }
