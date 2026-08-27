@@ -144,9 +144,9 @@ MainTabView
 |---|---|---|
 |<img src="screenshots/feed.png" width="250" />|<img src="screenshots/camera.png" width="250" />|<img src="screenshots/filter.png" width="250" />|
 
-|New Post|Profile|
-|---|---|
-|<img src="screenshots/newpost.png" width="250" />|<img src="screenshots/profile.png" width="250" />|
+|New Post|Profile|Login|
+|---|---|---|
+|<img src="screenshots/newpost.png" width="250" />|<img src="screenshots/profile.png" width="250" />|<img src="screenshots/login.png" width="250" />|
 
 |Post Detail|Comment Menu|Saved Posts|
 |---|---|---|
