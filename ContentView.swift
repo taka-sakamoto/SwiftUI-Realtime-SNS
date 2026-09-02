@@ -30,6 +30,8 @@ struct ContentView: View {
     @State private var showUploadView = false
     @State private var selectedProfile: SelectedProfile?
     
+    @State private var showUserSearch = false
+    
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -133,6 +135,15 @@ struct ContentView: View {
                     
                 }
                 .navigationTitle("Images")
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            showUserSearch = true
+                        } label: {
+                            Image(systemName: "magnifyingglass")
+                        }
+                    }
+                }
                 .navigationDestination(item: $selectedProfile) { profile in
                         ProfileView(
                             viewModel: profileViewModel,
@@ -175,7 +186,16 @@ struct ContentView: View {
             PostUploadView(
                 userName: profileViewModel.user?.displayName ?? ""
             )
-
+        }
+        .sheet(isPresented: $showUserSearch) {
+            UserSearchView(
+                profileViewModel: profileViewModel,
+                imageListViewModel: viewModel,
+                namespace: namespace,
+                onLogout: {
+                    authViewModel.signOut()
+                }
+            )
         }
         
     }

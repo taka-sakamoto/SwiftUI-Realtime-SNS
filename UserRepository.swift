@@ -57,7 +57,7 @@ final class UserRepository {
             .document(user.id)
             .setData([
                 "displayName": user.displayName,
-                "disoplayNameLower": user.displayName.lowercased(),
+                "displayNameLower": user.displayName.lowercased(),
                 "bio": user.bio,
                 "profileImageURL": user.profileImageURL,
                 "followersCount": 0,
@@ -360,9 +360,11 @@ final class UserRepository {
     func fetchFollowingUserIDs(userID: String) async throws -> [String] {
         
         let snapshot = try await db
-            .collection(collection)
-            .document(userID)
-            .collection("following")
+            // .collection(collection)
+            // .document(userID)
+            // .collection("following")
+            .collection("users")
+            .whereField("displayNameLower", isEqualTo: "user7217")
             .getDocuments()
         
         return snapshot.documents.map { $0.documentID }
@@ -379,4 +381,29 @@ final class UserRepository {
         return snapshot.documents.map { $0.documentID }
     }
     
+    // MARK: - Search Users
+    
+    func searchUsers(keyword: String) async throws -> [User] {
+        
+        let snapshot = try await db
+            .collection("users")
+            .order(by: "displayNameLower")
+            .start(at: [keyword])
+            .end(at: [keyword + "\u{f8ff}"])
+            .getDocuments()
+        
+        return snapshot.documents.compactMap { document in
+            
+            do {
+                var data = document.data()
+                data["id"] = document.documentID
+                
+                return try Firestore.Decoder().decode(User.self, from: data)
+            } catch {
+                print("USER DECODE ERROR:", error)  // ログ用
+                return nil
+            }
+        }
+    }
+     
 }
