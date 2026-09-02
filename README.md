@@ -30,6 +30,7 @@ The project follows the MVVM architecture and focuses on building a modern, real
   - Bio
   - Profile image
 - 👥 Follow / Unfollow users
+- 🔍 Search users
 - 👤 View Followers
 - 👥 View Following
 - 🤝 Follow Back
@@ -297,7 +298,6 @@ posts
 ## 🚀 Future Improvements
 
 - 🔔 Push notifications
-- 🔎 User search
 - 📰 Feed filtering by followed users
 - 🔔 Follow / Like / Comment notifications
 - 💬 Additional social features
