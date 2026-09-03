@@ -97,7 +97,7 @@ class ImageListViewModel: ObservableObject {
             .addSnapshotListener { [weak self] snapshot, error in
                 
                 guard let self = self else { return }
-                guard let documents = snapshot?.documents else { return }
+                guard let documents = snapshot?.documents else { return }       
                 
                 self.posts = documents.compactMap { doc -> Post? in
                     let data = doc.data()

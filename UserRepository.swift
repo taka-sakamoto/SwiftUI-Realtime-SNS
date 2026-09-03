@@ -360,11 +360,9 @@ final class UserRepository {
     func fetchFollowingUserIDs(userID: String) async throws -> [String] {
         
         let snapshot = try await db
-            // .collection(collection)
-            // .document(userID)
-            // .collection("following")
-            .collection("users")
-            .whereField("displayNameLower", isEqualTo: "user7217")
+            .collection(collection)
+            .document(userID)
+            .collection("following")
             .getDocuments()
         
         return snapshot.documents.map { $0.documentID }
