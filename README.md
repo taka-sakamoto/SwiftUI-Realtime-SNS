@@ -33,6 +33,7 @@ The project follows the MVVM architecture and focuses on building a modern, real
 - 🔍 Search users
 - 👤 View Followers
 - 👥 View Following
+- 📰 Feed filtering by followed users
 - 🤝 Follow Back
 - 🔐 Firebase Authentication
   - Email / Password authentication
