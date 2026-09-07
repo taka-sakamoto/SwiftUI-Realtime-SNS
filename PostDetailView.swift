@@ -165,17 +165,20 @@ struct PostDetailView: View {
     }
     
     private var imageSection: some View {
-
-       PostImageView(
-        post: post,
-        namespace: namespace,
-        isSource: false,
-        contentMode: .fit,
-        size: CGSize(
-            width: UIScreen.main.bounds.width,
-            height: UIScreen.main.bounds.width
-        )
-       )
+        GeometryReader { geometry in
+            PostImageView(
+                post: post,
+                namespace: namespace,
+                isSource: false,
+                contentMode: .fit,
+                size: CGSize(
+                    width: geometry.size.width,
+                    height: geometry.size.width
+                ),
+                useMatchedGeometry: false
+            )
+        }
+        .aspectRatio(1, contentMode: .fit)
     }
     
     private var actionBarSection: some View {

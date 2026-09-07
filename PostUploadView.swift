@@ -62,7 +62,7 @@ struct PostUploadView: View {
                 
                 VStack(spacing: 20) {
                     
-                    if let image = pickedImage {
+                    if pickedImage != nil {
                         
                         if let previewImage {
                             
@@ -191,14 +191,14 @@ struct PostUploadView: View {
             updatePreview()
             generateThumbnails()
         }
-        .onChange(of: pickedImage) { _ in
+        .onChange(of: pickedImage) {
             updatePreview()
             generateThumbnails()
         }
-        .onChange(of: selectedFilter) { _ in
+        .onChange(of: selectedFilter) {
             updatePreview()
         }
-        .onChange(of: intensity) { _ in
+        .onChange(of: intensity) {
             updatePreview()
         }
     }
@@ -223,7 +223,7 @@ struct PostUploadView: View {
             
             storageRef.downloadURL { url, error in
                 
-                if let error = error {
+                if error != nil {
                     
                     return
                 }

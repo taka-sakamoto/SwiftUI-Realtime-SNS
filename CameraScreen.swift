@@ -41,7 +41,7 @@ struct CameraScreen: View {
             // MARK: - Bottom Controls
             bottomControls
         }
-        .onChange(of: cameraManager.didSavedVideo) { saved in
+        .onChange(of: cameraManager.didSavedVideo) { _, saved in
             
             guard saved else { return }
             
@@ -60,7 +60,7 @@ struct CameraScreen: View {
         }
         .sheet(isPresented: $showPostUpload) {
             
-            if let originalImage = cameraManager.capturedOriginalImage {
+            if cameraManager.capturedOriginalImage != nil {
                 
                 PostUploadView(
                     initialImage: cameraManager.capturedOriginalImage,

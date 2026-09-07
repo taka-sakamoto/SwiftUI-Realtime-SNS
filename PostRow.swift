@@ -63,7 +63,8 @@ struct PostRow: View {
                     namespace: namespace,
                     isSource: isSource,
                     contentMode: .fit,
-                    size: nil
+                    size: nil,
+                    useMatchedGeometry: true
                 )
                 
                 // 中央ハート❤️

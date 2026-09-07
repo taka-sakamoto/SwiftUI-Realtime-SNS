@@ -22,7 +22,7 @@ struct UserRow: View {
         
         HStack(spacing: 12) {
             
-            KFImage(URL(string: user.profileImageURL ?? ""))
+            KFImage(URL(string: user.profileImageURL))
                 .resizable()
                 .placeholder {
                     Image(systemName: "person.circle.fill")

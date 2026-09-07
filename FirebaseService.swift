@@ -80,9 +80,6 @@ class FirebaseService {
                 let posts = documents.compactMap { doc -> Post? in
                     let data = doc.data()
                     
-                    guard let imageUrl = data["imageUrl"] as? String,
-                          let userId = data["userId"] as? String else { return nil }
-                    
                     return Post(
                         id: doc.documentID,
                         imageUrl: data["imageUrl"] as? String ?? "",

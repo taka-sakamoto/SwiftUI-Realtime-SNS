@@ -22,10 +22,6 @@ final class ImageFilterManager {
         intensity: Float
     ) -> UIImage {
         
-        guard let ciImage = CIImage(image: image) else {
-            return image
-        }
-        
         switch filter {
             
         case .normal:

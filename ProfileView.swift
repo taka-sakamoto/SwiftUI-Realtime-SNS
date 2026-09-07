@@ -11,24 +11,29 @@ import FirebaseAuth
 
 struct ProfileView: View {
     
+    // MARK: - Detail Source
+    
+    enum DetailSource {
+        case feed
+        case saved
+    }
+    
     // MARK: - Dependencies
     
     @ObservedObject var viewModel: ProfileViewModel
-    
     @ObservedObject var imageListViewModel: ImageListViewModel
     
     let namespace: Namespace.ID
-    
     let userID: String?
-    
     let onLogout: () -> Void
+    
+    @Namespace private var savedNamespace
     
     // MARK: - State
     
     @State private var showingEditProfile = false
-    
     @State private var selectedDetailPost: Post?
-    
+    @State private var detailSource: DetailSource?
     @State private var selectedTab = 0
     
     private let columns = [
@@ -191,9 +196,11 @@ struct ProfileView: View {
                     } else {
                         
                         SavedPostsView(
-                            namespace: namespace,
+                            // namespace: namespace,
+                            namespace: savedNamespace,
                             viewModel: imageListViewModel,
                             selectedDetailPost: $selectedDetailPost,
+                            detailSource: $detailSource,
                             isSource: selectedDetailPost == nil
                             
                         )
@@ -203,6 +210,7 @@ struct ProfileView: View {
                 
                 .padding()
             }
+            
             .onAppear {
                 let targetUserID =
                 userID ?? Auth.auth().currentUser?.uid
@@ -226,7 +234,7 @@ struct ProfileView: View {
                 
                 PostDetailView(
                     post: post,
-                    namespace: namespace,
+                    namespace: detailSource == .saved ? savedNamespace : namespace,
                     onClose: {
                         
                         withAnimation(.spring(
