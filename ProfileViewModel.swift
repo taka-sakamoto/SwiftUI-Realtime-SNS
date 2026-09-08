@@ -160,7 +160,7 @@ final class ProfileViewModel: ObservableObject {
             user?.updatedAt = Date()
             
         } catch {
-            print("Failed to update profile image:", error)
+            // エラー処理は後で検討
         }
     }
     
@@ -207,7 +207,7 @@ final class ProfileViewModel: ObservableObject {
         do {
             user = try await repository.fetchUser(uid: uid)
         } catch {
-            print("Failed to fetch user: \(error.localizedDescription)")
+            // エラー処理は後で検討
         }
     }
     

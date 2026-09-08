@@ -64,8 +64,7 @@ class ImageListViewModel: ObservableObject {
             users[uid] = user
             
         } catch {
-            
-            print("Failed to fetch user:", error)
+            // 後でエラー処理を整理する
         }
     }
     
@@ -176,8 +175,7 @@ class ImageListViewModel: ObservableObject {
             updateSavedPosts()
 
         } catch {
-            
-            print("Faild to fetch saved posts:", error)
+            // エラー処理は別途検討
         }
         
     }
@@ -209,8 +207,7 @@ class ImageListViewModel: ObservableObject {
             updateSavedPosts()
             
         } catch {
-            
-            print("Failed to toggle save:", error)
+            // エラー処理は別途検討
         }
     }
     
@@ -218,20 +215,10 @@ class ImageListViewModel: ObservableObject {
     // MARK: - Private Methods
     
     private func updateSavedPosts() {
-        
-        /*
-        print("UPDATE SAVED")  // ログ用
-        print("savedPostIDs:", savedPostIDs)  // ログ用
-        print("posts:", posts.map { $0.id })  // ログ用
-        */
-        
         savedPosts = posts.filter { post in
             
             savedPostIDs.contains(post.id)
         }
-        
-        // print("savedPosts:", savedPosts.map { $0.id })  // ログ用
-        
     }
     
     

@@ -110,7 +110,6 @@ final class UserRepository {
             .addSnapshotListener { snapshot, error in
                 
                 if let error = error {
-                    print("Failed to listen user: \(error)")
                     onChange(nil)
                     return
                 }
@@ -395,7 +394,6 @@ final class UserRepository {
                 
                 return try Firestore.Decoder().decode(User.self, from: data)
             } catch {
-                print("USER DECODE ERROR:", error)  // ログ用
                 return nil
             }
         }

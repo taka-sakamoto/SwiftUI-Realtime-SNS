@@ -111,7 +111,6 @@ final class MetalFilterManager {
         guard let commandBuffer =
                 commandQueue.makeCommandBuffer()
         else {
-            print("commandBuffer create failed")
             return image
         }
         

@@ -44,13 +44,8 @@ final class AuthViewModel: ObservableObject {
                 )
             
             userID = result.user.uid
-            
             return true
-            
         } catch {
-            
-            print("SIGN IN ERROR:", error.localizedDescription)
-            
             return false
         }
     }
@@ -66,8 +61,7 @@ final class AuthViewModel: ObservableObject {
             userID = nil
             
         } catch {
-            
-            print("SIGN OUT FAILED:", error.localizedDescription)
+            // 必要なら後でエラー処理を検討
         }
     }
     

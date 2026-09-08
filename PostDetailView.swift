@@ -48,15 +48,8 @@ struct PostDetailView: View {
     }
     
     private var currentPost: Post {
-        
-        let found = viewModel.posts.first { $0.id == post.id } // ログ用
-        
-        print("DETAIL POST:", post.id)
-        print("FOUND:", found?.id ?? "nil")
-        print("POST COUNT:", viewModel.posts.count)
-        
-        return found ?? post  // ログ用ここまで
-        
+        let found = viewModel.posts.first { $0.id == post.id }
+        return found ?? post
     }
     
     private var isLiked: Bool {

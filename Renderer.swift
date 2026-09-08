@@ -47,11 +47,6 @@ final class Renderer: NSObject, MTKViewDelegate {
         guard let device = mtkView.device,
               let commandQueue = device.makeCommandQueue()
         else {
-            
-            #if DEBUG
-            print("Faild to setup Metal")
-            #endif
-            
             self.device = MTLCreateSystemDefaultDevice()!
             self.commndQueue = self.device.makeCommandQueue()!
             
@@ -80,7 +75,6 @@ final class Renderer: NSObject, MTKViewDelegate {
               let vertexFunction = library.makeFunction(name: "vertexShader"),
               let fragmentFunction = library.makeFunction(name: fragmentFunctionName)
         else {
-            print("Failed to load shaders")
             return
         }
         
@@ -94,14 +88,12 @@ final class Renderer: NSObject, MTKViewDelegate {
                 descriptor: pipelineDescriptor
             )
         } catch {
-            print("Failed to create pipeline state: \(error)")
             return
         }
     }
     
     func updateTexture(from pixelBuffer: CVPixelBuffer) {
         guard let textureCache = textureCache else {
-            print("Texture cache not found")
             return
         }
         
@@ -123,13 +115,11 @@ final class Renderer: NSObject, MTKViewDelegate {
         )
         
         if status != kCVReturnSuccess {
-            print("Failed to create CVMetalTexture")
             return
         }
         
         guard let cvTexture = cvTexture,
               let texture = CVMetalTextureGetTexture(cvTexture) else {
-            print("Failed to get MTLTexture")
             return
         }
         

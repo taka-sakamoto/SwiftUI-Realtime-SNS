@@ -30,7 +30,6 @@ struct MetalCameraView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> MTKView {
         guard let device = MTLCreateSystemDefaultDevice() else {
-            // print("Metal is not supported")
             return MTKView()
         }
 
@@ -52,11 +51,8 @@ struct MetalCameraView: UIViewRepresentable {
 
         cameraManager.renderer = context.coordinator.renderer
 
-        // これを追加
         cameraManager.setupCamera()
-        
-        print("autoResizeDrawable:", mtkView.autoResizeDrawable)
-
+ 
         return mtkView
 
     }

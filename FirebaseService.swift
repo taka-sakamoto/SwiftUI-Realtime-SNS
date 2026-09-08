@@ -29,10 +29,8 @@ class FirebaseService {
         ]
         
         db.collection("posts").addDocument(data: data) { error in
-            if let error = error {
-                print("Firestore error:", error.localizedDescription)
-            } else {
-                print("Post saved")
+            if error != nil {
+                return
             }
         }
         
@@ -45,8 +43,7 @@ class FirebaseService {
         
         ref.putData(data) { _, error in
         
-            if let error = error {
-                print(error.localizedDescription)
+            if error != nil {
                 return
             }
             

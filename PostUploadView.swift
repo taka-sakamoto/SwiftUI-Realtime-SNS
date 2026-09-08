@@ -160,12 +160,6 @@ struct PostUploadView: View {
                             return
                         }
                         
-                        print(  // デバッグ
-                            "Upload image size:",
-                            data.count / 1024,
-                            "KB"
-                        )  // ここまで
-                        
                         uploadImage(
                             data: data,
                             uid: uid,
@@ -216,8 +210,7 @@ struct PostUploadView: View {
         
         storageRef.putData(data) { _, error in
             
-            if let error = error {
-                print("Storage upload error:", error)
+            if error != nil {
                 return
             }
             

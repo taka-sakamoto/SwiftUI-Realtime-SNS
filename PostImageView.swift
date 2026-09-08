@@ -27,12 +27,6 @@ struct PostImageView: View {
             .placeholder {
                 ProgressView()
             }
-            .onSuccess{ _ in
-                print("KFIMAGE SUCCESS:", post.id)
-            }
-            .onFailure{ error in
-                print("KFIMAGE FAILURE:", post.id, error)
-            }
             .cancelOnDisappear(true)
             .resizable()
             .aspectRatio(contentMode: contentMode)
@@ -73,51 +67,6 @@ struct PostImageView: View {
     }
 }
 
-/*
-struct PostImageView: View {
-    
-    // MARK: - Properties
-    
-    let post: Post
-    let namespace: Namespace.ID
-    
-    let isSource: Bool
-    let contentMode: SwiftUI.ContentMode
-    let size: CGSize?
-    
-    let useMatchedGeometry: Bool
-    
-    // MARK: - Body
-
-    var body: some View {
-        KFImage(URL(string: post.imageUrl))
-            .placeholder {
-                ProgressView()
-            }
-        
-            .onSuccess { _ in  // ログ用 ここから
-                print("KFIMAGE SUCCESS:", post.id)
-            }
-            .onFailure { error in
-                print("KFIMAGE FAILURE:", post.id, error)
-            }  // ログ用 ここまで
-        
-            .cancelOnDisappear(true)
-            .resizable()
-            .aspectRatio(contentMode: contentMode)
-            .frame(
-                width: size?.width,
-                height: size?.height
-            )
-            .matchedGeometryEffect(
-                id: post.id,
-                in: namespace,
-                isSource: isSource
-            )
-            .clipped()
-    }
-}
- */
 
 #Preview {
 

@@ -136,7 +136,7 @@ final class CameraManager: NSObject, ObservableObject {
                 
         
         } catch {
-            print("switch camera error:", error) // ログ用
+            
         }
          
         
@@ -157,7 +157,6 @@ final class CameraManager: NSObject, ObservableObject {
         
         guard let image = renderer?.captureCurrentFrame()
         else {
-            print("capture failed") // ログ用
             return
         }
         
@@ -181,13 +180,6 @@ final class CameraManager: NSObject, ObservableObject {
             nil,
             nil
         )
-        
-        print(              // デバッグ用
-            "original:",
-            image.size,
-            "filtered:",
-            filtered.size
-        )
     }
     
     func startRecording() {
@@ -205,9 +197,7 @@ final class CameraManager: NSObject, ObservableObject {
             isRecording = true
             
         } catch {
-            
-            print(error)
-            
+        
         }
     }
     
@@ -248,7 +238,6 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
     ) {
 
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-            print("Failed to get pixel buffer") // ログ用
             return
         }
          

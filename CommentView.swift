@@ -50,8 +50,6 @@ struct CommentView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8))
 
                     Button("送信") {
-                        
-                        //print("comment userName:", userName)
 
                         guard let user = profileViewModel.user else {
                             return

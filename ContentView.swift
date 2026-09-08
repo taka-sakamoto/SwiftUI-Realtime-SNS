@@ -55,7 +55,6 @@ struct ContentView: View {
     func signInAnonymously() {
         Auth.auth().signInAnonymously { result, error in
             if let error = error {
-                print("Auth error:", error.localizedDescription)
                 return
             }
             
@@ -78,8 +77,6 @@ struct ContentView: View {
             return true
             
         } catch {
-            print("SIGN OUT FAILED:", error.localizedDescription)
-            
             return false
         }
     }
@@ -87,11 +84,9 @@ struct ContentView: View {
     // MARK: - Switch Anonymous User
     
     private func switchAnonymousUser() {
-        
         guard signOut() else {
             return
         }
-        
         signInAnonymously()
     }
     
