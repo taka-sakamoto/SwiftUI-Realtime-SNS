@@ -33,9 +33,6 @@ final class UserRepository {
         let timestamp = data["createdAt"] as? Timestamp
         let updatedTimeStamp = data["updatedAt"] as? Timestamp
         
-        let followersCount = data["followersCount"] as? Int ?? 0
-        let followingCount = data["followingCount"] as? Int ?? 0
-        
         return User(
             id: uid,
             displayName: data["displayName"] as? String ?? "",
@@ -222,7 +219,7 @@ final class UserRepository {
             .collection("followers")
             .document(currentUserID)
         
-        try await db.runTransaction { transaction, errorPointer in
+        _ = try await db.runTransaction { transaction, errorPointer in
             
             let followingSnapshot: DocumentSnapshot
             
@@ -297,7 +294,7 @@ final class UserRepository {
             .collection("followers")
             .document(currentUserID)
         
-        try await db.runTransaction { transaction, errorPointer in
+        _ = try await db.runTransaction { transaction, errorPointer in
             
             let followingSnapshot: DocumentSnapshot
             

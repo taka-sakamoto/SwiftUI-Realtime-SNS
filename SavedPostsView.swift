@@ -36,47 +36,37 @@ struct SavedPostsView: View {
     // MARK: - Body
     
     var body: some View {
-        
-        let gridSize = UIScreen.main.bounds.width / 3 - 4
+        GeometryReader { geometry in
+            let gridSize = (geometry.size.width - 4) / 3
             
-        // gridSection
-        LazyVGrid(columns: columns, spacing: 2) {
-                
-            ForEach(viewModel.savedPosts) { post in
-                    
-                PostImageView(
-                    post: post,
-                    namespace: namespace,
-                    isSource: isSource,
-                    contentMode: .fill,
-                    size: CGSize(
-                        width: gridSize,
-                        height: gridSize
-                    ),
-                    useMatchedGeometry: true
-                )
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    withAnimation(.spring(
-                        response: 0.45,
-                        dampingFraction: 0.82
-                )) {
-                    detailSource = .saved
-                    selectedDetailPost = post
+            // gridSection
+            LazyVGrid(columns: columns, spacing: 2) {
+                ForEach(viewModel.savedPosts) { post in
+                    PostImageView(
+                        post: post,
+                        namespace: namespace,
+                        isSource: isSource,
+                        contentMode: .fill,
+                        size: CGSize(
+                            width: gridSize,
+                            height: gridSize
+                        ),
+                        useMatchedGeometry: true
+                    )
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation(.spring(
+                            response: 0.45,
+                            dampingFraction: 0.82
+                        )) {
+                            detailSource = .saved
+                            selectedDetailPost = post
+                        }
                     }
                 }
-
             }
         }
-
-        .onAppear {  // ログ用
-            
-            print("SAVED POSTS VIEW:",viewModel.savedPosts.map { $0.id })
-            print("SAVED isSource:", isSource)
-            print("SAVED selectedDetailPost:", selectedDetailPost?.id as Any)
-        }  // ここまでログ用
-        
-        
+        .frame(maxWidth: .infinity)
         .navigationTitle("Saved")
         .navigationBarTitleDisplayMode(.inline)
        
