@@ -181,22 +181,32 @@ struct ProfileView: View {
                             
                             ForEach(viewModel.posts, id: \.id) { post in
                                 
-                                KFImage(URL(string: post.imageUrl))
-                                    .resizable()
-                                    .placeholder {
-                                        ProgressView()
-                                            .frame(width: 120, height: 120)
+                                PostImageView(
+                                    post: post,
+                                    namespace: namespace,
+                                    isSource: selectedDetailPost == nil,
+                                    contentMode: .fill,
+                                    size: CGSize(width: 120, height: 120),
+                                    useMatchedGeometry: false
+                                )
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    withAnimation(.spring(
+                                        response: 0.45,
+                                        dampingFraction: 0.82
+                                    )) {
+                                        detailSource = .feed
+                                        selectedDetailPost = post
                                     }
-                                    .scaledToFill()
-                                    .frame(width: 120, height: 120)
-                                    .clipped()
-                                    .id(post.id)
+                                }
+                                .id(post.id)
+                                
                             }
+                        
                         }
                     } else {
                         
                         SavedPostsView(
-                            // namespace: namespace,
                             namespace: savedNamespace,
                             viewModel: imageListViewModel,
                             selectedDetailPost: $selectedDetailPost,
