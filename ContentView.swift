@@ -54,7 +54,7 @@ struct ContentView: View {
     
     func signInAnonymously() {
         Auth.auth().signInAnonymously { result, error in
-            if let error = error {
+            if error != nil {
                 return
             }
             

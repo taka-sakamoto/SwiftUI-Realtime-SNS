@@ -146,9 +146,22 @@ final class FollowListViewModel: ObservableObject {
             
             followingUserIDs.insert(userID)
             
+            /*
+            print("FOLLOW SUCCESS") // ログ用
+            
+            try await repository.createNotification(
+                recipientID: userID,
+                senderID: currentUserID,
+                type: .follow
+            )
+            
+            print("NOTIFICATION CREATED") // ログ用
+             */
+            
         } catch {
             
             errorMessage = error.localizedDescription
+            // print("Follow error:", error.localizedDescription)  // ログ用
         }
     }
     

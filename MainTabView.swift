@@ -69,6 +69,18 @@ struct MainTabView: View {
                     systemImage: "person"
                 )
             }
+            
+            // MARK: - Notifications
+            
+            NavigationStack {
+                NotificationView()
+            }
+            .tabItem {
+                Label(
+                    "Notifications",
+                    systemImage:  "bell"
+                )
+            }
         }
     }
 }

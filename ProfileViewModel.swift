@@ -246,11 +246,9 @@ final class ProfileViewModel: ObservableObject {
     
     @MainActor
     func follow(targetUserID: String) async {
-
         guard let currentUserID = Auth.auth().currentUser?.uid else {
             return
         }
-        
         guard currentUserID != targetUserID else {
             return
         }
@@ -262,6 +260,12 @@ final class ProfileViewModel: ObservableObject {
             )
             
             isFollowing = true
+            
+            try await repository.createNotification(
+                recipientID: targetUserID,
+                senderID: currentUserID,
+                type: .follow
+            )
             
         } catch {
             errorMessage = error.localizedDescription

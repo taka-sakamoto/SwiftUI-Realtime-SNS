@@ -109,7 +109,7 @@ final class UserRepository {
             .document(uid)
             .addSnapshotListener { snapshot, error in
                 
-                if let error = error {
+                if error != nil {
                     onChange(nil)
                     return
                 }
@@ -398,5 +398,31 @@ final class UserRepository {
             }
         }
     }
-     
+    
+    // MARK: - Create Notification
+    
+     func createNotification(
+        recipientID: String,
+        senderID: String,
+        type: NotificationType,
+        postID: String? = nil
+     ) async throws {
+         let data: [String: Any] = [
+            "recipientID": recipientID,
+            "senderID": senderID,
+            "type": type.rawValue,
+            "createdAt": Timestamp(),
+            "isRead": false
+         ]
+         
+         var notificationData = data
+         
+         if let postID {
+             notificationData["postID"] = postID
+         }
+         
+         try await db
+             .collection("notifications")
+             .addDocument(data: notificationData)
+     }
 }
