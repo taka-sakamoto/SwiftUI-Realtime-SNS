@@ -73,7 +73,11 @@ struct MainTabView: View {
             // MARK: - Notifications
             
             NavigationStack {
-                NotificationView()
+                NotificationView(
+                    imageListViewModel: imageListViewModel,
+                    profileViewModel: profileViewModel,
+                    namespace: namespace
+                )
             }
             .tabItem {
                 Label(

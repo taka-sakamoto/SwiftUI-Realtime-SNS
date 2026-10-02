@@ -8,27 +8,33 @@
 import SwiftUI
 
 struct NotificationView: View {
-    
     @StateObject private var viewModel = NotificationViewModel()
+    // @StateObject private var imageListViewModel = ImageListViewModel()
+    // @Namespace private var namespace
+    
+    @ObservedObject var imageListViewModel: ImageListViewModel
+    @ObservedObject var profileViewModel: ProfileViewModel
+    let namespace: Namespace.ID
     
     var body: some View {
-        List(viewModel.notifications) { notification in
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(notificationMessage(for: notification))
-                        .font(.body)
-                    
-                    Text(notification.createdAt, style: .relative)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                
-                Spacer()
-                
-                if !notification.isRead {
-                    Circle()
-                        .fill(.blue)
-                        .frame(width: 8, height: 8)
+        List {
+            ForEach(viewModel.notifications, id: \.id) { notification in
+                if notification.type == .follow {
+                    NavigationLink {
+                        ProfileView(
+                            viewModel: profileViewModel,
+                            imageListViewModel: imageListViewModel,
+                            namespace: namespace,
+                            userID: notification.senderID,
+                            onLogout: {
+                                // 通知画面からはログアウトしない
+                            }
+                        )
+                    } label: {
+                        notificationRow(for: notification)
+                    }
+                } else {
+                    notificationRow(for: notification)
                 }
             }
         }
@@ -37,19 +43,44 @@ struct NotificationView: View {
             await viewModel.fetchNotifications()
         }
     }
+        
+    private func notificationRow(
+        for notification: AppNotification
+    ) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(notificationMessage(for: notification))
+                    .font(.body)
+
+                Text(notification.createdAt, style: .relative)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            if !notification.isRead {
+                Circle()
+                    .fill(.blue)
+                    .frame(width: 8, height: 8)
+            }
+        }
+    }
     
     private func notificationMessage(
         for notificcation: AppNotification
     ) -> String {
+        let senderName = viewModel.senderNames[notificcation.senderID] ?? ""
+        
         switch notificcation.type {
         case .follow:
-            return "フォローされました"
+            return "\(senderName)さんがあなたをフォローしました"
             
         case .like:
-            return "あなたの投稿にいいねされました"
+            return "\(senderName)さんがあなたの投稿にいいねしました"
             
         case .comment:
-            return "あなたの投稿にコメントされました"
+            return "\(senderName)さんがあなたの投稿にコメントしました"
         }
     }
 }

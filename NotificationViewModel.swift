@@ -14,9 +14,11 @@ import Combine
 final class NotificationViewModel: ObservableObject {
     
     @Published var notifications: [AppNotification] = []
+    @Published var senderNames: [String: String] = [:]
     @Published var errorMessage: String?
     
     private let db = Firestore.firestore()
+    private let userRepository = UserRepository()
     
     func fetchNotifications() async {
         guard let currentUserID = Auth.auth().currentUser?.uid else {
@@ -29,7 +31,6 @@ final class NotificationViewModel: ObservableObject {
                 .whereField("recipientID", isEqualTo: currentUserID)
                 .order(by: "createdAt", descending: true)
                 .getDocuments()
-            
             
             notifications = snapshot.documents.compactMap { document in
                 let data = document.data()
@@ -54,6 +55,23 @@ final class NotificationViewModel: ObservableObject {
                     createdAt: createdAt.dateValue(),
                     isRead: isRead
                 )
+            }
+            
+            senderNames = [:]
+            
+            for notification in notifications {
+                guard senderNames[notification.senderID] == nil else {
+                    continue
+                }
+                
+                do {
+                    let user = try await userRepository.fetchUser(
+                        uid: notification.senderID
+                    )
+                    senderNames[notification.senderID] = user.displayName
+                } catch {
+                    senderNames[notification.senderID] = ""
+                }
             }
             
         } catch {
