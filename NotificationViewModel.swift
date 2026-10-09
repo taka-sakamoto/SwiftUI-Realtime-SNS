@@ -78,4 +78,36 @@ final class NotificationViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
     }
+    
+    func markAsRead(_ notification: AppNotification) async {
+        print("markAsRead called:", notification.id)  // ログ用
+        print("isRead before:", notification.isRead)  // ログ用
+        
+        // すでに既読なら何もしない
+        guard !notification.isRead else {
+            print("Already read")  // ログ用
+            return
+        }
+        
+        do {
+            try await db
+                .collection("notifications")
+                .document(notification.id)
+                .updateData(["isRead": true])
+            
+            print("Firestore update succeeded")  // ログ用
+            
+            if let index = notifications.firstIndex(where: {
+                $0.id == notification.id
+            }) {
+                notifications[index].isRead = true
+                print("Local notification updated")  // ログ用
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+            print("Firestore update failed:", error.localizedDescription)  // ログ用
+        }
+    }
+    
+    
 }

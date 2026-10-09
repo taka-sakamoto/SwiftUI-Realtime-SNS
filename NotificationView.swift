@@ -30,9 +30,21 @@ struct NotificationView: View {
                                 // 通知画面からはログアウトしない
                             }
                         )
+                        .task {
+                            await viewModel.markAsRead(notification)
+                        }
                     } label: {
                         notificationRow(for: notification)
                     }
+                    /*
+                    .simultaneousGesture(
+                        TapGesture().onEnded {
+                            Task {
+                                await viewModel.markAsRead(notification)
+                            }
+                        }
+                    )
+                     */
                 } else {
                     notificationRow(for: notification)
                 }
