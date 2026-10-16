@@ -113,19 +113,44 @@ class FirebaseService {
         
     }
     
-    func toggleLike(post: Post) {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+    func toggleLike(post: Post) async {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
         
         let ref = db.collection("posts").document(post.id)
         
         if post.likedBy.contains(uid) {
-            ref.updateData([
-                "likedBy": FieldValue.arrayRemove([uid])
-            ])
+            do {
+                try await ref.updateData([
+                    "likedBy": FieldValue.arrayRemove([uid])
+                ])
+            } catch {
+                print("Umlike failed:", error.localizedDescription)
+            }
         } else {
-            ref.updateData([
-                "likedBy": FieldValue.arrayUnion([uid])
-            ])
+            do {
+                try await ref.updateData([
+                    "likedBy": FieldValue.arrayUnion([uid])
+                ])
+                
+                // 自分の投稿へのいいねでは通知しない
+                guard post.userId != uid else {
+                    return
+                }
+                
+                try await userRepository.createNotification(
+                    recipientID: post.userId,
+                    senderID: uid,
+                    type: .like,
+                    postID: post.id
+                )
+                
+                print("Like notification created successfully")
+                
+            } catch {
+                print("Like or notification failed:", error.localizedDescription)
+            }
         }
     }
     
@@ -145,16 +170,32 @@ class FirebaseService {
             "createdAt": FieldValue.serverTimestamp()
         ]
 
+        // コメントを保存
         db.collection("posts")
             .document(postId)
             .collection("comments")
-            .addDocument(data: data)
+            // .addDocument(data: data)
+            .addDocument(data: data) { error in  // ログ用
+                if let error = error {
+                    print("Comment save failed:", error.localizedDescription)
+                } else {
+                    print("Comment saved successfully")
+                }
+            }  // ログ用　ここまで
         
+        // 投稿のコメント数を更新
         db.collection("posts")
             .document(postId)
             .updateData([
                 "commentCount": FieldValue.increment(Int64(1))
-            ])
+            // ])
+            ]) { error in  // ログ用
+                if let error = error {
+                    print("Comment count update failed:", error.localizedDescription)
+                } else {
+                    print("Comment count update succeeded")
+                }
+            }  // ログ用ここまで
     }
     
     func listenComments(

@@ -154,7 +154,9 @@ class ImageListViewModel: ObservableObject {
     }
     
     func toggleLike(post: Post) {
-        FirebaseService.shared.toggleLike(post: post)
+        Task {
+            await FirebaseService.shared.toggleLike(post: post)
+        }
     }
     
     deinit {

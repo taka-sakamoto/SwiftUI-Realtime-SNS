@@ -128,7 +128,7 @@ struct PostDetailView: View {
         }
     }
     
-    // MARK: - SEctions
+    // MARK: - Sections
     
     private var headerSection: some View {
         

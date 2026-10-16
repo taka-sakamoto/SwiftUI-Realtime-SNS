@@ -9,9 +9,7 @@ import SwiftUI
 
 struct NotificationView: View {
     @StateObject private var viewModel = NotificationViewModel()
-    // @StateObject private var imageListViewModel = ImageListViewModel()
-    // @Namespace private var namespace
-    
+
     @ObservedObject var imageListViewModel: ImageListViewModel
     @ObservedObject var profileViewModel: ProfileViewModel
     let namespace: Namespace.ID
@@ -36,15 +34,25 @@ struct NotificationView: View {
                     } label: {
                         notificationRow(for: notification)
                     }
-                    /*
-                    .simultaneousGesture(
-                        TapGesture().onEnded {
-                            Task {
-                                await viewModel.markAsRead(notification)
-                            }
+                    
+                } else if let postID = notification.postID,
+                          let post = imageListViewModel.posts.first(where: {
+                              $0.id == postID
+                          }) {
+                    NavigationLink {
+                        PostDetailView(
+                            post: post,
+                            namespace: namespace,
+                            onClose: {
+                                // 詳細画面を閉じる処理は既存実装に合わせる
+                            }, viewModel: imageListViewModel
+                        )
+                        .task {
+                            await viewModel.markAsRead(notification)
                         }
-                    )
-                     */
+                    } label: {
+                        notificationRow(for: notification)
+                    }
                 } else {
                     notificationRow(for: notification)
                 }
@@ -80,11 +88,11 @@ struct NotificationView: View {
     }
     
     private func notificationMessage(
-        for notificcation: AppNotification
+        for notification: AppNotification
     ) -> String {
-        let senderName = viewModel.senderNames[notificcation.senderID] ?? ""
+        let senderName = viewModel.senderNames[notification.senderID] ?? ""
         
-        switch notificcation.type {
+        switch notification.type {
         case .follow:
             return "\(senderName)さんがあなたをフォローしました"
             
