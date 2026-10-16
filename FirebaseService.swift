@@ -171,24 +171,61 @@ class FirebaseService {
         ]
 
         // コメントを保存
-        db.collection("posts")
+        self.db.collection("posts")
             .document(postId)
             .collection("comments")
-            // .addDocument(data: data)
             .addDocument(data: data) { error in  // ログ用
                 if let error = error {
                     print("Comment save failed:", error.localizedDescription)
-                } else {
-                    print("Comment saved successfully")
+                    return
                 }
-            }  // ログ用　ここまで
+                
+                print("Comment saved successfully")  // ログ用
+                
+                // コメント保存後に通知を作成
+                Task {
+                    do {
+                        let postSnapshot = try await self.db
+                            .collection("posts")
+                            .document(postId)
+                            .getDocument()
+                        
+                        guard let postData = postSnapshot.data(),
+                              let postOwnerID = postData["userId"] as? String
+                        else {
+                            print("Comment notification failed: post owner not found")  // ログ用
+                            return
+                        }
+                        
+                        // 自分自身の投稿には通知しない
+                        guard postOwnerID != uid else {
+                            print("Comment notification skipped: own post")  // ログ用
+                            return
+                        }
+                        
+                        try await self.userRepository.createNotification(
+                            recipientID: postOwnerID,
+                            senderID: uid,
+                            type: .comment,
+                            postID: postId
+                        )
+                        
+                        print("Comment notification created successfully")  // ログ用
+                        
+                    } catch {
+                        print(
+                            "Comment notification failed:",
+                            error.localizedDescription
+                        )
+                    }
+                }
+            }
         
         // 投稿のコメント数を更新
-        db.collection("posts")
+        self.db.collection("posts")
             .document(postId)
             .updateData([
                 "commentCount": FieldValue.increment(Int64(1))
-            // ])
             ]) { error in  // ログ用
                 if let error = error {
                     print("Comment count update failed:", error.localizedDescription)
